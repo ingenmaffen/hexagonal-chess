@@ -156,12 +156,27 @@ const switchDarkLightMode = () => {
 };
 
 // handle game events
+const findClickedPiece = (player, clickedField) => {
+  for (const [key, value] of Object.entries(gameState[player])) {
+    value.forEach((field) => {
+      if (field === clickedField) {
+        console.log(key);
+        console.log(clickedField);
+        // TODO: find possible moves for clicked piece
+        // TODO: save clicked piece to a variable
+        // TODO: when selected, click on a possible field to move or the selected piece to deselect
+        // TODO: on move switch active player
+      }
+    });
+  }
+};
+
 canvas.addEventListener("click", (event) => {
   const x = event.layerX / gameScale;
   const y = event.layerY / gameScale;
   const offsetX = hexagonWidth / 2;
   const offsetY = hexagonHeight / 2;
-  const possibleClicks = [];
+  const clickedField = [];
   for (const [key, value] of Object.entries(hexagons)) {
     if (
       value.x + offsetX < x &&
@@ -169,14 +184,15 @@ canvas.addEventListener("click", (event) => {
       value.x + offsetX + hexagonWidth - scale / 2 > x &&
       value.y + offsetY + hexagonHeight > y
     ) {
-      possibleClicks.push(key);
+      clickedField.push(key);
     }
   }
-  if (possibleClicks.length === 1) {
-    console.log(possibleClicks[0]);
+  if (clickedField.length === 1) {
+    findClickedPiece("white", clickedField[0]);
   }
 });
 
+// initiate game
 drawBoard();
 drawGameState();
 appendDarkLightButton();
