@@ -8,16 +8,19 @@ canvas.addEventListener("click", (event) => {
   const y = event.layerY / gameScale;
   const offsetX = hexagonWidth / 2;
   const offsetY = hexagonHeight / 2;
-  const possibleClicks = hexagons.filter(
-    (hexagon) =>
-      hexagon.x + offsetX < x &&
-      hexagon.y + offsetY < y &&
-      hexagon.x + offsetX + hexagonWidth - scale / 2 > x &&
-      hexagon.y + offsetY + hexagonHeight > y
-  );
+  const possibleClicks = [];
+  for (const [key, value] of Object.entries(hexagons)) {
+    if (
+      value.x + offsetX < x &&
+      value.y + offsetY < y &&
+      value.x + offsetX + hexagonWidth - scale / 2 > x &&
+      value.y + offsetY + hexagonHeight > y
+    ) {
+      possibleClicks.push(key);
+    }
+  }
   if (possibleClicks.length === 1) {
-    console.log(possibleClicks[0].notation);
-    // TODO: select
+    console.log(possibleClicks[0]);
   }
 });
 
@@ -46,7 +49,7 @@ const drawHexagon = (relativeX = 0, relativeY = 0, color = "#ff0000") => {
   ctx.fill();
 };
 
-const hexagons = [];
+const hexagons = {};
 const drawBoard = () => {
   const colors = ["#D28C45", "#E9AD70", "#FFCF9F"];
   const fieldDefinition = {
@@ -65,19 +68,69 @@ const drawBoard = () => {
   let keyIndex = 0;
   for (const [key, value] of Object.entries(fieldDefinition)) {
     for (let i = 0; i < value; i++) {
-      hexagons.push({
-        notation: `${key}${i + 1}`,
+      hexagons[`${key}${i + 1}`] = {
         x: keyIndex * hexagonWidth,
         y: (4.5 + value * 0.5 - i) * hexagonHeight,
         color: colors[(i + value) % 3],
-      });
+      };
     }
     keyIndex++;
   }
 
-  hexagons.forEach((hexagon) => {
-    drawHexagon(hexagon.x, hexagon.y, hexagon.color);
-  });
+  for (const [key, value] of Object.entries(hexagons)) {
+    drawHexagon(value.x, value.y, value.color);
+  }
 };
 
 drawBoard();
+
+const gameState = {
+  white: {
+    pawn: ["b1", "c2", "d3", "e4", "f5", "g4", "h3", "i2", "k1"],
+    bishop: ["f1", "f2", "f3"],
+    rook: ["c1", "i1"],
+    knight: ["d1", "h1"],
+    queen: ["e1"],
+    king: ["g1"],
+  },
+  black: {
+    pawn: ["b7", "c7", "d7", "e7", "f7", "g7", "h7", "i7", "k7"],
+    bishop: ["f11", "f10", "f9"],
+    rook: ["c8", "i8"],
+    knight: ["d9", "h9"],
+    queen: ["e10"],
+    king: ["g10"],
+  },
+};
+
+for (const [key, value] of Object.entries(gameState.white)) {
+  value.forEach((field) => {
+    const img = new Image();
+    img.src = `./assets/${key}-white.svg`;
+    img.onload = () => {
+      ctx.drawImage(
+        img,
+        hexagons[field].x + hexagonWidth * 0.45,
+        hexagons[field].y + hexagonHeight * 0.65,
+        hexagonWidth * 0.75,
+        hexagonHeight * 0.75
+      );
+    };
+  });
+}
+
+for (const [key, value] of Object.entries(gameState.black)) {
+  value.forEach((field) => {
+    const img = new Image();
+    img.src = `./assets/${key}-black.svg`;
+    img.onload = () => {
+      ctx.drawImage(
+        img,
+        hexagons[field].x + hexagonWidth * 0.45,
+        hexagons[field].y + hexagonHeight * 0.65,
+        hexagonWidth * 0.75,
+        hexagonHeight * 0.75
+      );
+    };
+  });
+}
