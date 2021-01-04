@@ -1,58 +1,24 @@
+const fieldOrder = "abcdefghikl";
+const defaultPawnPositions = {
+  white: ["b1", "c2", "d3", "e4", "f5", "g4", "h3", "i2", "k1"],
+  black: ["b7", "c7", "d7", "e7", "f7", "g7", "h7", "i7", "k7"],
+};
+
 const getPossibleMoves = (piece, clickedField) => {
   selectedField = clickedField;
   const numberRegex = /\d+/g;
   let fieldNumber = clickedField.match(numberRegex)[0];
   const fieldKey = clickedField.replace(fieldNumber, "");
   fieldNumber = +fieldNumber;
-  const fieldOrder = "abcdefghikl";
-  const enemyPositions = [];
-  for (let [key, value] of Object.entries(
-    gameState[currentPlayer === "white" ? "black" : "white"]
-  )) {
-    value.forEach((piece) => {
-      enemyPositions.push(piece);
-    });
-  }
+  const enemyPositions = getEnemyPositions();
   switch (piece) {
     case "pawn":
       if (currentPlayer === "white") {
-        // vertical movement
-        // TODO: only move to if it is that pawns first move, implementation idea:
-        // array with inital pawn positions, on move remove pawn from array
-        for (let i = 0; i < 2; i++) {
-          if (fieldNumber + i + 1 <= fieldDefinition[fieldKey]) {
-            if (
-              enemyPositions.indexOf(`${fieldKey}${fieldNumber + i + 1}`) > 0
-            ) {
-              break;
-            }
-            possibleActions.push(`${fieldKey}${fieldNumber + i + 1}`);
-          }
-        }
-        // diagonal movement (if has enemy)
-        const fieldOrderIndex = fieldOrder.indexOf(fieldKey);
-        // right side
-        if (fieldOrderIndex + 1 < fieldOrder.length) {
-          const rightSideEnemyField = `${fieldOrder[fieldOrderIndex + 1]}${
-            fieldOrderIndex > 4 ? fieldNumber : fieldNumber + 1
-          }`;
-          if (enemyPositions.find((field) => field === rightSideEnemyField)) {
-            possibleActions.push(rightSideEnemyField);
-          }
-        }
-        // left side
-        if (fieldOrderIndex - 1 > 0) {
-          const leftSideEnemyField = `${fieldOrder[fieldOrderIndex - 1]}${
-            fieldOrderIndex > 4 ? fieldNumber + 1 : fieldNumber
-          }`;
-          if (enemyPositions.find((field) => field === leftSideEnemyField)) {
-            possibleActions.push(leftSideEnemyField);
-          }
-        }
+        getWhitePawnMoves(fieldKey, fieldNumber, enemyPositions);
       }
       // if currentPlayer is black
       else {
-        // TODO
+        getBlackPawnMoves(fieldKey, fieldNumber, enemyPositions);
       }
       break;
     case "bishop":
@@ -85,15 +51,127 @@ const handleMove = (clickedField, piece) => {
       (action) => action === clickedField
     );
     if (actionField) {
-      // TODO: if selected piece is pawn and actionField is the opposite end of the board, append promotion dialog
+      if (piece === "pawn" && defaultPawnPositions[currentPlayer].length) {
+        const playerPawnIndex = defaultPawnPositions[currentPlayer].indexOf(
+          selectedField
+        );
+        if (playerPawnIndex !== -1) {
+          defaultPawnPositions[currentPlayer].splice(playerPawnIndex, 1);
+        }
+      }
       const pieceIndex = gameState[currentPlayer][piece].indexOf(selectedField);
       const oppositePlayer = currentPlayer === "white" ? "black" : "white";
       gameState[currentPlayer][piece][pieceIndex] = actionField;
-      // TODO: if selected field has enemy, remove it
+
+      // remove enemy piece
+      const enemyPositions = getEnemyPositions();
+      if (enemyPositions.find((pos) => pos === actionField)) {
+        for (let [key, value] of Object.entries(gameState[oppositePlayer])) {
+          if (value.find((piecePos) => piecePos === actionField)) {
+            const index = gameState[oppositePlayer][key].indexOf(actionField);
+            gameState[oppositePlayer][key].splice(index, 1);
+
+            if (key === "pawn") {
+              const pawnIndex = defaultPawnPositions[oppositePlayer].indexOf(
+                actionField
+              );
+              if (index !== -1) {
+                defaultPawnPositions[oppositePlayer].splice(pawnIndex, 1);
+              }
+            }
+          }
+        }
+      }
+
       currentPlayer = oppositePlayer;
       possibleActions = [];
+      selectedField = null;
       drawBoard();
       drawGameState();
+    }
+  }
+};
+
+const getEnemyPositions = () => {
+  const enemyPositions = [];
+  for (let [key, value] of Object.entries(
+    gameState[currentPlayer === "white" ? "black" : "white"]
+  )) {
+    value.forEach((piece) => {
+      enemyPositions.push(piece);
+    });
+  }
+  return enemyPositions;
+};
+
+const getWhitePawnMoves = (fieldKey, fieldNumber, enemyPositions) => {
+  const pawnInDefaultPosition = defaultPawnPositions[currentPlayer].indexOf(
+    `${fieldKey}${fieldNumber}`
+  );
+  // vertical movement
+  for (let i = 0; i < (pawnInDefaultPosition > -1 ? 2 : 1); i++) {
+    if (fieldNumber + i + 1 <= fieldDefinition[fieldKey]) {
+      if (enemyPositions.indexOf(`${fieldKey}${fieldNumber + i + 1}`) > 0) {
+        break;
+      }
+      possibleActions.push(`${fieldKey}${fieldNumber + i + 1}`);
+    }
+  }
+
+  // diagonal movement (if has enemy)
+  const fieldOrderIndex = fieldOrder.indexOf(fieldKey);
+  // right side
+  if (fieldOrderIndex + 1 < fieldOrder.length) {
+    const rightSideEnemyField = `${fieldOrder[fieldOrderIndex + 1]}${
+      fieldOrderIndex > 4 ? fieldNumber : fieldNumber + 1
+    }`;
+    if (enemyPositions.find((field) => field === rightSideEnemyField)) {
+      possibleActions.push(rightSideEnemyField);
+    }
+  }
+  // left side
+  if (fieldOrderIndex - 1 > 0) {
+    const leftSideEnemyField = `${fieldOrder[fieldOrderIndex - 1]}${
+      fieldOrderIndex > 5 ? fieldNumber + 1 : fieldNumber
+    }`;
+    if (enemyPositions.find((field) => field === leftSideEnemyField)) {
+      possibleActions.push(leftSideEnemyField);
+    }
+  }
+};
+
+const getBlackPawnMoves = (fieldKey, fieldNumber, enemyPositions) => {
+  const pawnInDefaultPosition = defaultPawnPositions[currentPlayer].indexOf(
+    `${fieldKey}${fieldNumber}`
+  );
+  // vertical movement
+  for (let i = 0; i < (pawnInDefaultPosition > -1 ? 2 : 1); i++) {
+    if (fieldNumber - (i + 1) > 0) {
+      if (enemyPositions.indexOf(`${fieldKey}${fieldNumber - (i + 1)}`) > 0) {
+        break;
+      }
+      possibleActions.push(`${fieldKey}${fieldNumber - (i + 1)}`);
+    }
+  }
+
+  // diagonal movement (if has enemy)
+  const fieldOrderIndex = fieldOrder.indexOf(fieldKey);
+  // right side
+  if (fieldOrderIndex + 1 < fieldOrder.length) {
+    const rightSideEnemyField = `${fieldOrder[fieldOrderIndex + 1]}${
+      fieldOrderIndex > 4 ? fieldNumber - 1 : fieldNumber
+    }`;
+    if (enemyPositions.find((field) => field === rightSideEnemyField)) {
+      possibleActions.push(rightSideEnemyField);
+    }
+  }
+  // left side
+  if (fieldOrderIndex - 1 > 0) {
+    const leftSideEnemyField = `${fieldOrder[fieldOrderIndex - 1]}${
+      fieldOrderIndex > 5 ? fieldNumber : fieldNumber - 1
+    }`;
+    if (enemyPositions.find((field) => field === leftSideEnemyField)) {
+      possibleActions.push(leftSideEnemyField);
     }
   }
 };
