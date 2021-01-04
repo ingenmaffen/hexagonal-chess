@@ -10,11 +10,28 @@ window.addEventListener("resize", (_event) => {
 });
 
 // variable definitions
+let selectedField = null;
+let possibleActions = [];
+let currentPlayer = "white";
+const pieceTypes = ["pawn", "bishop", "rook", "knight", "queen", "king"];
 let gameScale = window.innerHeight / 1080;
 const scale = 50;
 const hexagonHeight = scale * Math.cos(Math.PI / 6) * 2;
 const hexagonWidth = 1.5 * scale;
 const hexagons = {};
+const fieldDefinition = {
+  a: 6,
+  b: 7,
+  c: 8,
+  d: 9,
+  e: 10,
+  f: 11,
+  g: 10,
+  h: 9,
+  i: 8,
+  k: 7,
+  l: 6,
+};
 const gameState = {
   white: {
     pawn: ["b1", "c2", "d3", "e4", "f5", "g4", "h3", "i2", "k1"],
@@ -54,19 +71,6 @@ const drawBoard = () => {
   const colorsLight = ["#D28C45", "#E9AD70", "#FFCF9F"];
   const colorsDark = ["#001540", "#001C57", "#00316E"];
   const colors = dark ? colorsDark : colorsLight;
-  const fieldDefinition = {
-    a: 6,
-    b: 7,
-    c: 8,
-    d: 9,
-    e: 10,
-    f: 11,
-    g: 10,
-    h: 9,
-    i: 8,
-    k: 7,
-    l: 6,
-  };
   let keyIndex = 0;
   for (const [key, value] of Object.entries(fieldDefinition)) {
     for (let i = 0; i < value; i++) {
@@ -153,21 +157,140 @@ const switchDarkLightMode = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawGameState();
   drawBoard();
+  if (selectedField) {
+    drawSelectedField();
+  }
 };
 
 // handle game events
-const findClickedPiece = (player, clickedField) => {
-  for (const [key, value] of Object.entries(gameState[player])) {
-    value.forEach((field) => {
-      if (field === clickedField) {
-        console.log(key);
-        console.log(clickedField);
-        // TODO: find possible moves for clicked piece
-        // TODO: save clicked piece to a variable
-        // TODO: when selected, click on a possible field to move or the selected piece to deselect
-        // TODO: on move switch active player
-      }
+const drawSelectedField = () => {
+  const selectedHexagon = hexagons[selectedField];
+  drawHexagon(selectedHexagon.x, selectedHexagon.y, "#296600");
+  drawGameState();
+  possibleActions.forEach((actionField) => {
+    const possibleActionHexagon = hexagons[actionField];
+    drawHexagon(possibleActionHexagon.x, possibleActionHexagon.y, "#BA110C");
+    drawGameState();
+  });
+};
+
+const getPossibleMoves = (piece, clickedField) => {
+  selectedField = clickedField;
+  const numberRegex = /\d+/g;
+  let fieldNumber = clickedField.match(numberRegex)[0];
+  const fieldKey = clickedField.replace(fieldNumber, "");
+  fieldNumber = +fieldNumber;
+  const fieldOrder = "abcdefghikl";
+  const enemyPositions = [];
+  for (let [key, value] of Object.entries(
+    gameState[currentPlayer === "white" ? "black" : "white"]
+  )) {
+    value.forEach((piece) => {
+      enemyPositions.push(piece);
     });
+  }
+  switch (piece) {
+    case "pawn":
+      if (currentPlayer === "white") {
+        // vertical movement
+        // TODO: only move to if it is that pawns first move, implementation idea:
+        // array with inital pawn positions, on move remove pawn from array
+        for (let i = 0; i < 2; i++) {
+          if (fieldNumber + i + 1 <= fieldDefinition[fieldKey]) {
+            if (
+              enemyPositions.indexOf(`${fieldKey}${fieldNumber + i + 1}`) > 0
+            ) {
+              break;
+            }
+            possibleActions.push(`${fieldKey}${fieldNumber + i + 1}`);
+          }
+        }
+        // diagonal movement (if has enemy)
+        const fieldOrderIndex = fieldOrder.indexOf(fieldKey);
+        // right side
+        if (fieldOrderIndex + 1 < fieldOrder.length) {
+          const rightSideEnemyField = `${fieldOrder[fieldOrderIndex + 1]}${
+            fieldOrderIndex > 4 ? fieldNumber : fieldNumber + 1
+          }`;
+          if (enemyPositions.find((field) => field === rightSideEnemyField)) {
+            possibleActions.push(rightSideEnemyField);
+          }
+        }
+        // left side
+        if (fieldOrderIndex - 1 > 0) {
+          const leftSideEnemyField = `${fieldOrder[fieldOrderIndex - 1]}${
+            fieldOrderIndex > 4 ? fieldNumber + 1 : fieldNumber
+          }`;
+          if (enemyPositions.find((field) => field === leftSideEnemyField)) {
+            possibleActions.push(leftSideEnemyField);
+          }
+        }
+      }
+      // if currentPlayer is black
+      else {
+        // TODO
+      }
+      break;
+    case "bishop":
+      // TODO
+      break;
+    case "rook":
+      // TODO
+      break;
+    case "knight":
+      // TODO
+      break;
+    case "queen":
+      // TODO
+      break;
+    case "king":
+      // TODO
+      break;
+  }
+  drawSelectedField();
+};
+
+const handleMove = (clickedField, piece) => {
+  if (selectedField === clickedField) {
+    selectedField = null;
+    drawBoard();
+    drawGameState();
+    possibleActions = [];
+  } else {
+    const actionField = possibleActions.find(
+      (action) => action === clickedField
+    );
+    if (actionField) {
+      // TODO: if selected piece is pawn and actionField is the opposite end of the board, append promotion dialog
+      const pieceIndex = gameState[currentPlayer][piece].indexOf(selectedField);
+      const oppositePlayer = currentPlayer === "white" ? "black" : "white";
+      gameState[currentPlayer][piece][pieceIndex] = actionField;
+      // TODO: if selected field has enemy, remove it
+      currentPlayer = oppositePlayer;
+      possibleActions = [];
+      drawBoard();
+      drawGameState();
+    }
+  }
+};
+
+const findClickedPiece = (player, clickedField) => {
+  if (!selectedField) {
+    for (const [key, value] of Object.entries(gameState[player])) {
+      value.forEach((field) => {
+        if (field === clickedField) {
+          getPossibleMoves(key, clickedField);
+        }
+      });
+    }
+  } else {
+    for (const [key, value] of Object.entries(gameState[player])) {
+      value.forEach((field) => {
+        if (field === selectedField) {
+          handleMove(clickedField, key);
+        }
+      });
+    }
   }
 };
 
@@ -188,7 +311,7 @@ canvas.addEventListener("click", (event) => {
     }
   }
   if (clickedField.length === 1) {
-    findClickedPiece("white", clickedField[0]);
+    findClickedPiece(currentPlayer, clickedField[0]);
   }
 });
 
