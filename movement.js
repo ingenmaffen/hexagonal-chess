@@ -3,6 +3,10 @@ const defaultPawnPositions = {
   white: ["b1", "c2", "d3", "e4", "f5", "g4", "h3", "i2", "k1"],
   black: ["b7", "c7", "d7", "e7", "f7", "g7", "h7", "i7", "k7"],
 };
+const promotionFields = {
+  white: ["a6", "b7", "c8", "d9", "e10", "f11", "g10", "h9", "i8", "k7", "l6"],
+  black: ["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1", "i1", "k1", "l1"],
+};
 
 const getPossibleMoves = (piece, clickedField) => {
   selectedField = clickedField;
@@ -11,14 +15,25 @@ const getPossibleMoves = (piece, clickedField) => {
   const fieldKey = clickedField.replace(fieldNumber, "");
   fieldNumber = +fieldNumber;
   const enemyPositions = getEnemyPositions();
+  const playerPositions = getPlayerPositions();
   switch (piece) {
     case "pawn":
       if (currentPlayer === "white") {
-        getWhitePawnMoves(fieldKey, fieldNumber, enemyPositions);
+        getWhitePawnMoves(
+          fieldKey,
+          fieldNumber,
+          enemyPositions,
+          playerPositions
+        );
       }
       // if currentPlayer is black
       else {
-        getBlackPawnMoves(fieldKey, fieldNumber, enemyPositions);
+        getBlackPawnMoves(
+          fieldKey,
+          fieldNumber,
+          enemyPositions,
+          playerPositions
+        );
       }
       break;
     case "bishop":
@@ -63,6 +78,13 @@ const handleMove = (clickedField, piece) => {
       const oppositePlayer = currentPlayer === "white" ? "black" : "white";
       gameState[currentPlayer][piece][pieceIndex] = actionField;
 
+      if (
+        piece === "pawn" &&
+        promotionFields[currentPlayer].find((field) => field === actionField)
+      ) {
+        appendPromotionWindow(currentPlayer, actionField);
+      }
+
       // remove enemy piece
       const enemyPositions = getEnemyPositions();
       if (enemyPositions.find((pos) => pos === actionField)) {
@@ -92,6 +114,32 @@ const handleMove = (clickedField, piece) => {
   }
 };
 
+const appendPromotionWindow = (currentPlayer, actionField) => {
+  const possiblePieces = ["bishop", "rook", "knight", "queen"];
+  const promoWindow = document.getElementById("promotion-window");
+  const buttonContainer = document.createElement("DIV");
+  buttonContainer.classList = ["promotion-button-container"];
+  possiblePieces.forEach((piece) => {
+    const button = document.createElement("BUTTON");
+    button.classList = ["promotion-button"];
+    button.style.backgroundColor = dark ? "black" : "white";
+    buttonContainer.appendChild(button);
+    button.innerHTML = `<img width="32" height="32" src="assets/${piece}-${currentPlayer}.svg" />`;
+    button.onclick = () => {
+      promoWindow.removeChild(buttonContainer);
+      const index = gameState[currentPlayer].pawn.indexOf(actionField);
+      gameState[currentPlayer].pawn.splice(index, 1);
+      gameState[currentPlayer][piece].push(actionField);
+      drawBoard();
+      drawGameState();
+      promoWindow.style.display = "none";
+    };
+  });
+  promoWindow.style.display = "block";
+  promoWindow.appendChild(buttonContainer);
+  buttonContainer.style.backgroundColor = dark ? "white" : "black";
+};
+
 const getEnemyPositions = () => {
   const enemyPositions = [];
   for (let [key, value] of Object.entries(
@@ -104,14 +152,32 @@ const getEnemyPositions = () => {
   return enemyPositions;
 };
 
-const getWhitePawnMoves = (fieldKey, fieldNumber, enemyPositions) => {
+const getPlayerPositions = () => {
+  const playerPositions = [];
+  for (let [key, value] of Object.entries(gameState[currentPlayer])) {
+    value.forEach((piece) => {
+      playerPositions.push(piece);
+    });
+  }
+  return playerPositions;
+};
+
+const getWhitePawnMoves = (
+  fieldKey,
+  fieldNumber,
+  enemyPositions,
+  playerPositions
+) => {
   const pawnInDefaultPosition = defaultPawnPositions[currentPlayer].indexOf(
     `${fieldKey}${fieldNumber}`
   );
   // vertical movement
   for (let i = 0; i < (pawnInDefaultPosition > -1 ? 2 : 1); i++) {
     if (fieldNumber + i + 1 <= fieldDefinition[fieldKey]) {
-      if (enemyPositions.indexOf(`${fieldKey}${fieldNumber + i + 1}`) > 0) {
+      if (
+        enemyPositions.indexOf(`${fieldKey}${fieldNumber + i + 1}`) > -1 ||
+        playerPositions.indexOf(`${fieldKey}${fieldNumber + i + 1}`) > -1
+      ) {
         break;
       }
       possibleActions.push(`${fieldKey}${fieldNumber + i + 1}`);
@@ -140,14 +206,22 @@ const getWhitePawnMoves = (fieldKey, fieldNumber, enemyPositions) => {
   }
 };
 
-const getBlackPawnMoves = (fieldKey, fieldNumber, enemyPositions) => {
+const getBlackPawnMoves = (
+  fieldKey,
+  fieldNumber,
+  enemyPositions,
+  playerPositions
+) => {
   const pawnInDefaultPosition = defaultPawnPositions[currentPlayer].indexOf(
     `${fieldKey}${fieldNumber}`
   );
   // vertical movement
   for (let i = 0; i < (pawnInDefaultPosition > -1 ? 2 : 1); i++) {
     if (fieldNumber - (i + 1) > 0) {
-      if (enemyPositions.indexOf(`${fieldKey}${fieldNumber - (i + 1)}`) > 0) {
+      if (
+        enemyPositions.indexOf(`${fieldKey}${fieldNumber - (i + 1)}`) > -1 ||
+        playerPositions.indexOf(`${fieldKey}${fieldNumber - (i + 1)}`) > -1
+      ) {
         break;
       }
       possibleActions.push(`${fieldKey}${fieldNumber - (i + 1)}`);
@@ -175,3 +249,5 @@ const getBlackPawnMoves = (fieldKey, fieldNumber, enemyPositions) => {
     }
   }
 };
+
+const getBishopMoves = () => {};

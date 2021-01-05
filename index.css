@@ -1,0 +1,41 @@
+body {
+  margin: 0 auto;
+  text-align: center;
+}
+
+#button-container {
+  width: 100%;
+  height: 72px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  text-align: right;
+}
+
+#promotion-window {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+
+.promotion-button-container {
+  width: 50%;
+  height: 120px;
+  margin: 0 auto;
+  margin-top: 15%;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.promotion-button {
+  max-width: 72px;
+  height: 72px;
+  flex: 1;
+  margin-top: 24px;
+  border-radius: 42px;
+  border: none;
+  outline: none;
+}
