@@ -37,10 +37,11 @@ const getPossibleMoves = (piece, clickedField) => {
       }
       break;
     case "bishop":
-      // TODO
+      getBishopMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
       break;
     case "rook":
-      // TODO
+      getRookMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
+      console.log(possibleActions);
       break;
     case "knight":
       // TODO
@@ -250,4 +251,173 @@ const getBlackPawnMoves = (
   }
 };
 
-const getBishopMoves = () => {};
+const hasEnemyOrPlayerPiece = (
+  enemyOrPlayerPositions,
+  fieldKey,
+  fieldNumber
+) => {
+  return enemyOrPlayerPositions.find(
+    (field) => field === `${fieldKey}${fieldNumber}`
+  );
+};
+
+const getBishopMoves = (
+  fieldKey,
+  fieldNumber,
+  enemyPositions,
+  playerPositions
+) => {};
+
+// refactor maybe
+const getRookMoves = (
+  fieldKey,
+  fieldNumber,
+  enemyPositions,
+  playerPositions
+) => {
+  // up
+  for (let i = fieldNumber + 1; i <= fieldDefinition[fieldKey]; i++) {
+    const currentField = `${fieldKey}${i}`;
+    if (hasEnemyOrPlayerPiece(enemyPositions, fieldKey, i)) {
+      possibleActions.push(currentField);
+      break;
+    } else if (hasEnemyOrPlayerPiece(playerPositions, fieldKey, i)) {
+      break;
+    } else {
+      possibleActions.push(currentField);
+    }
+  }
+
+  // down
+  for (let i = fieldNumber - 1; i > 0; i--) {
+    const currentField = `${fieldKey}${i}`;
+    if (hasEnemyOrPlayerPiece(enemyPositions, fieldKey, i)) {
+      possibleActions.push(currentField);
+      break;
+    } else if (hasEnemyOrPlayerPiece(playerPositions, fieldKey, i)) {
+      break;
+    } else {
+      possibleActions.push(currentField);
+    }
+  }
+
+  const startKeyIndex = fieldOrder.indexOf(fieldKey);
+
+  // upper left
+  for (let i = fieldOrder.indexOf(fieldKey) - 1; i >= 0; i--) {
+    const currentFieldNumber =
+      i > 5
+        ? fieldNumber +
+          (fieldDefinition[fieldOrder[i]] -
+            fieldDefinition[fieldOrder[startKeyIndex]])
+        : startKeyIndex > 5
+        ? fieldNumber + (11 - fieldDefinition[fieldOrder[startKeyIndex]])
+        : fieldNumber;
+    const upperCurrentField = `${fieldOrder[i]}${currentFieldNumber}`;
+    if (hexagons[upperCurrentField]) {
+      if (
+        hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentFieldNumber)
+      ) {
+        possibleActions.push(upperCurrentField);
+        break;
+      } else if (
+        hasEnemyOrPlayerPiece(
+          playerPositions,
+          fieldOrder[i],
+          currentFieldNumber
+        )
+      ) {
+        break;
+      } else {
+        possibleActions.push(upperCurrentField);
+      }
+    }
+  }
+
+  // lower left
+  for (let i = fieldOrder.indexOf(fieldKey) - 1; i >= 0; i--) {
+    const currentFieldNumber =
+      i > 5
+        ? fieldNumber
+        : startKeyIndex < 5
+        ? fieldNumber + (i - fieldOrder.indexOf(fieldKey))
+        : fieldNumber - (11 - fieldDefinition[fieldOrder[i]]);
+    const lowerCurrentField = `${fieldOrder[i]}${currentFieldNumber}`;
+    if (hexagons[lowerCurrentField]) {
+      if (
+        hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentFieldNumber)
+      ) {
+        possibleActions.push(lowerCurrentField);
+        break;
+      } else if (
+        hasEnemyOrPlayerPiece(
+          playerPositions,
+          fieldOrder[i],
+          currentFieldNumber
+        )
+      ) {
+        break;
+      } else {
+        possibleActions.push(lowerCurrentField);
+      }
+    }
+  }
+
+  // upper right
+  for (let i = fieldOrder.indexOf(fieldKey) + 1; i < fieldOrder.length; i++) {
+    const currentFieldNumber =
+      i <= 5
+        ? fieldNumber + (i - fieldOrder.indexOf(fieldKey))
+        : startKeyIndex > 5
+        ? fieldNumber
+        : fieldNumber + (11 - fieldDefinition[fieldOrder[startKeyIndex]]);
+    const upperCurrentField = `${fieldOrder[i]}${currentFieldNumber}`;
+    if (hexagons[upperCurrentField]) {
+      if (
+        hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentFieldNumber)
+      ) {
+        possibleActions.push(upperCurrentField);
+        break;
+      } else if (
+        hasEnemyOrPlayerPiece(
+          playerPositions,
+          fieldOrder[i],
+          currentFieldNumber
+        )
+      ) {
+        break;
+      } else {
+        possibleActions.push(upperCurrentField);
+      }
+    }
+  }
+
+  // lower right
+  for (let i = fieldOrder.indexOf(fieldKey) + 1; i < fieldOrder.length; i++) {
+    const currentFieldNumber =
+      i < 5
+        ? fieldNumber
+        : startKeyIndex > 5
+        ? fieldNumber - (i - fieldOrder.indexOf(fieldKey))
+        : fieldNumber - (11 - fieldDefinition[fieldOrder[i]]);
+    const lowerCurrentField = `${fieldOrder[i]}${currentFieldNumber}`;
+    if (hexagons[lowerCurrentField]) {
+      if (
+        hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentFieldNumber)
+      ) {
+        possibleActions.push(lowerCurrentField);
+        break;
+      } else if (
+        hasEnemyOrPlayerPiece(
+          playerPositions,
+          fieldOrder[i],
+          currentFieldNumber
+        )
+      ) {
+        break;
+      } else {
+        possibleActions.push(lowerCurrentField);
+      }
+    }
+  }
+};
