@@ -441,12 +441,86 @@ const getKnightMoves = (fieldKey, fieldNumber, enemyPositions, playerPositions) 
   const startKeyIndex = fieldOrder.indexOf(fieldKey);
 
   // left
-  for (let i = startKeyIndex - 1; i > 0 && startKeyIndex - i <= 3; i--) {
-    console.log(fieldOrder[i]);
+  for (let i = startKeyIndex - 1; i >= 0 && startKeyIndex - i <= 3; i--) {
+    let currentUpperField;
+    let currentLowerField;
+    switch (startKeyIndex - i) {
+      case 1:
+        currentUpperField = i >= 5 ? fieldNumber + 3 : fieldNumber + 2;
+        currentLowerField = i < 5 ? fieldNumber - 3 : fieldNumber - 2;
+        break;
+      case 2:
+        currentUpperField = startKeyIndex <= 5 ? fieldNumber + 1 : startKeyIndex <= 6 ? fieldNumber + 2 : fieldNumber + 3;
+        currentLowerField = startKeyIndex > 6 ? fieldNumber - 1 : startKeyIndex > 5 ? fieldNumber - 2 : fieldNumber - 3;
+        break;
+      case 3:
+        currentUpperField =
+          startKeyIndex > 7
+            ? fieldNumber + 2
+            : startKeyIndex === 7
+            ? fieldNumber + 1
+            : startKeyIndex === 6
+            ? fieldNumber
+            : fieldNumber - 1;
+        currentLowerField = currentUpperField - 1;
+        break;
+    }
+    console.log(`${fieldOrder[i]}${currentUpperField}`);
+    if (
+      currentUpperField > 0 &&
+      fieldDefinition[fieldOrder[i]] >= currentUpperField &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentUpperField)
+    ) {
+      possibleActions.push(`${fieldOrder[i]}${currentUpperField}`);
+    }
+    if (
+      currentLowerField > 0 &&
+      fieldDefinition[fieldOrder[i]] >= currentLowerField &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentLowerField)
+    ) {
+      possibleActions.push(`${fieldOrder[i]}${currentLowerField}`);
+    }
   }
 
   // right
   for (let i = startKeyIndex + 1; i < fieldOrder.length && i - startKeyIndex <= 3; i++) {
-    console.log(fieldOrder[i]);
+    let currentUpperField;
+    let currentLowerField;
+    switch (i - startKeyIndex) {
+      case 1:
+        currentUpperField = i <= 5 ? fieldNumber + 3 : fieldNumber + 2;
+        currentLowerField = i > 5 ? fieldNumber - 3 : fieldNumber - 2;
+        break;
+      case 2:
+        currentUpperField = startKeyIndex < 4 ? fieldNumber + 3 : startKeyIndex === 4 ? fieldNumber + 2 : fieldNumber + 1;
+        currentLowerField = startKeyIndex < 4 ? fieldNumber - 1 : startKeyIndex === 4 ? fieldNumber - 2 : fieldNumber - 3;
+        break;
+      case 3:
+        currentUpperField =
+          startKeyIndex < 3
+            ? fieldNumber + 2
+            : startKeyIndex === 3
+            ? fieldNumber + 1
+            : startKeyIndex === 4
+            ? fieldNumber
+            : fieldNumber - 1;
+        currentLowerField = currentUpperField - 1;
+        break;
+    }
+
+    if (
+      currentUpperField > 0 &&
+      fieldDefinition[fieldOrder[i]] >= currentUpperField &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentUpperField)
+    ) {
+      possibleActions.push(`${fieldOrder[i]}${currentUpperField}`);
+    }
+    if (
+      currentLowerField > 0 &&
+      fieldDefinition[fieldOrder[i]] >= currentLowerField &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentLowerField)
+    ) {
+      possibleActions.push(`${fieldOrder[i]}${currentLowerField}`);
+    }
   }
 };
