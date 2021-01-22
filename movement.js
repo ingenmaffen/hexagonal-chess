@@ -33,14 +33,14 @@ const getPossibleMoves = (piece, clickedField) => {
       getRookMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
       break;
     case "knight":
-      getKnightMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
+      getKnightMoves(fieldKey, fieldNumber, playerPositions);
       break;
     case "queen":
       getBishopMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
       getRookMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
       break;
     case "king":
-      // TODO
+      getKingMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
       break;
   }
   drawSelectedField();
@@ -437,7 +437,7 @@ const getRookMoves = (fieldKey, fieldNumber, enemyPositions, playerPositions) =>
   }
 };
 
-const getKnightMoves = (fieldKey, fieldNumber, enemyPositions, playerPositions) => {
+const getKnightMoves = (fieldKey, fieldNumber, playerPositions) => {
   const startKeyIndex = fieldOrder.indexOf(fieldKey);
 
   // left
@@ -465,7 +465,6 @@ const getKnightMoves = (fieldKey, fieldNumber, enemyPositions, playerPositions) 
         currentLowerField = currentUpperField - 1;
         break;
     }
-    console.log(`${fieldOrder[i]}${currentUpperField}`);
     if (
       currentUpperField > 0 &&
       fieldDefinition[fieldOrder[i]] >= currentUpperField &&
@@ -521,6 +520,132 @@ const getKnightMoves = (fieldKey, fieldNumber, enemyPositions, playerPositions) 
       !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentLowerField)
     ) {
       possibleActions.push(`${fieldOrder[i]}${currentLowerField}`);
+    }
+  }
+};
+
+const getKingMoves = (fieldKey, fieldNumber, enemyPositions, playerPositions) => {
+  const startKeyIndex = fieldOrder.indexOf(fieldKey);
+
+  const topLeftNumber = startKeyIndex > 5 ? fieldNumber + 1 : fieldNumber;
+  const topRightNumber = startKeyIndex < 5 ? fieldNumber + 1 : fieldNumber;
+
+  // 1 distance moves
+  const oneDistanceMoveFields = {
+    up: fieldDefinition[fieldKey] >= fieldNumber + 1 ? `${fieldKey}${fieldNumber + 1}` : null,
+    upLeft:
+      startKeyIndex - 1 >= 0 && fieldDefinition[fieldOrder[startKeyIndex - 1]] >= topLeftNumber
+        ? `${fieldOrder[startKeyIndex - 1]}${topLeftNumber}`
+        : null,
+    downLeft: startKeyIndex - 1 >= 0 && topLeftNumber - 1 > 0 ? `${fieldOrder[startKeyIndex - 1]}${topLeftNumber - 1}` : null,
+    down: fieldNumber - 1 > 0 ? `${fieldKey}${fieldNumber - 1}` : null,
+    downRight:
+      startKeyIndex + 1 < fieldOrder.length && topRightNumber - 1 > 0
+        ? `${fieldOrder[startKeyIndex + 1]}${topRightNumber - 1}`
+        : null,
+    upRight:
+      startKeyIndex + 1 < fieldOrder.length && fieldDefinition[fieldOrder[startKeyIndex + 1]] >= topRightNumber
+        ? `${fieldOrder[startKeyIndex + 1]}${topRightNumber}`
+        : null,
+  };
+
+  for (const [key, value] of Object.entries(oneDistanceMoveFields)) {
+    if (value) {
+      possibleActions.push(value);
+    }
+  }
+
+  // 2 distance moves
+  if (
+    (oneDistanceMoveFields.up &&
+      !hasEnemyOrPlayerPiece(enemyPositions, fieldKey, fieldNumber + 1) &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldKey, fieldNumber + 1)) ||
+    (oneDistanceMoveFields.upLeft &&
+      !hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[startKeyIndex - 1], topLeftNumber) &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex - 1], topLeftNumber))
+  ) {
+    if (
+      fieldDefinition[fieldOrder[startKeyIndex - 1]] >= topLeftNumber + 1 &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex - 1], topLeftNumber + 1)
+    ) {
+      possibleActions.push(`${fieldOrder[startKeyIndex - 1]}${topLeftNumber + 1}`);
+    }
+  }
+
+  if (
+    (oneDistanceMoveFields.downLeft &&
+      !hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[startKeyIndex - 1], topLeftNumber - 1) &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex - 1], topLeftNumber - 1)) ||
+    (oneDistanceMoveFields.upLeft &&
+      !hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[startKeyIndex - 1], topLeftNumber) &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex - 1], topLeftNumber))
+  ) {
+    const leftFieldNumber = startKeyIndex - 1 > 5 ? topLeftNumber : topLeftNumber - 1;
+    if (
+      startKeyIndex - 2 >= 0 &&
+      fieldDefinition[fieldOrder[startKeyIndex - 2]] >= leftFieldNumber &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex - 2], leftFieldNumber)
+    ) {
+      possibleActions.push(`${fieldOrder[startKeyIndex - 2]}${leftFieldNumber}`);
+    }
+  }
+  if (
+    (oneDistanceMoveFields.downLeft &&
+      !hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[startKeyIndex - 1], topLeftNumber - 1) &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex - 1], topLeftNumber - 1)) ||
+    (oneDistanceMoveFields.down &&
+      !hasEnemyOrPlayerPiece(enemyPositions, fieldKey, fieldNumber - 1) &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldKey, fieldNumber - 1))
+  ) {
+    if (topLeftNumber - 2 > 0 && !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex - 1], topLeftNumber - 2)) {
+      possibleActions.push(`${fieldOrder[startKeyIndex - 1]}${topLeftNumber - 2}`);
+    }
+  }
+
+  if (
+    (oneDistanceMoveFields.downRight &&
+      !hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[startKeyIndex + 1], topRightNumber - 1) &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex + 1], topRightNumber - 1)) ||
+    (oneDistanceMoveFields.down &&
+      !hasEnemyOrPlayerPiece(enemyPositions, fieldKey, fieldNumber - 1) &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldKey, fieldNumber - 1))
+  ) {
+    if (topRightNumber - 2 > 0 && !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex + 1], topRightNumber - 2)) {
+      possibleActions.push(`${fieldOrder[startKeyIndex + 1]}${topRightNumber - 2}`);
+    }
+  }
+
+  if (
+    (oneDistanceMoveFields.downRight &&
+      !hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[startKeyIndex + 1], topRightNumber - 1) &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex + 1], topRightNumber - 1)) ||
+    (oneDistanceMoveFields.upRight &&
+      !hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[startKeyIndex + 1], topRightNumber) &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex + 1], topRightNumber))
+  ) {
+    const rightFieldNumber = startKeyIndex + 1 >= 5 ? topRightNumber - 1 : topRightNumber;
+    if (
+      startKeyIndex + 2 < fieldOrder.length &&
+      topRightNumber + 2 <= fieldDefinition[fieldOrder[startKeyIndex + 2]] &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex + 2], rightFieldNumber)
+    ) {
+      possibleActions.push(`${fieldOrder[startKeyIndex + 2]}${rightFieldNumber}`);
+    }
+  }
+
+  if (
+    (oneDistanceMoveFields.up &&
+      !hasEnemyOrPlayerPiece(enemyPositions, fieldKey, fieldNumber + 1) &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldKey, fieldNumber + 1)) ||
+    (oneDistanceMoveFields.upRight &&
+      !hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[startKeyIndex + 1], topRightNumber) &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex + 1], topRightNumber))
+  ) {
+    if (
+      fieldDefinition[fieldOrder[startKeyIndex + 1]] >= topRightNumber + 1 &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex + 1], topRightNumber + 1)
+    ) {
+      possibleActions.push(`${fieldOrder[startKeyIndex + 1]}${topRightNumber + 1}`);
     }
   }
 };
