@@ -41,13 +41,13 @@ const getPossibleMoves = (piece, clickedField) => {
       break;
     case "rook":
       getRookMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
-      console.log(possibleActions);
       break;
     case "knight":
       // TODO
       break;
     case "queen":
-      // TODO
+      getBishopMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
+      getRookMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
       break;
     case "king":
       // TODO
@@ -266,7 +266,139 @@ const getBishopMoves = (
   fieldNumber,
   enemyPositions,
   playerPositions
-) => {};
+) => {
+  const startKeyIndex = fieldOrder.indexOf(fieldKey);
+
+  // left
+  for (let i = startKeyIndex - 1; i >= 0; i--) {
+    if ((startKeyIndex - i) % 2 === 0) {
+      const currentField =
+        startKeyIndex <= 5
+          ? fieldNumber +
+            fieldDefinition[fieldOrder[i]] -
+            fieldDefinition[fieldOrder[startKeyIndex]] +
+            (startKeyIndex - i) / 2
+          : i <= 5
+          ? fieldNumber +
+            fieldDefinition[fieldOrder[i]] -
+            11 +
+            (startKeyIndex - i) / 2
+          : fieldNumber + (startKeyIndex - i) / 2;
+
+      if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
+        possibleActions.push(`${fieldOrder[i]}${currentField}`);
+        break;
+      } else if (
+        hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)
+      ) {
+        break;
+      } else {
+        possibleActions.push(`${fieldOrder[i]}${currentField}`);
+      }
+    }
+  }
+
+  // right
+  for (let i = startKeyIndex + 1; i < fieldOrder.length; i++) {
+    if ((i - startKeyIndex) % 2 === 0) {
+      const currentField =
+        startKeyIndex > 5
+          ? fieldNumber +
+            fieldDefinition[fieldOrder[i]] -
+            fieldDefinition[fieldOrder[startKeyIndex]] +
+            (i - startKeyIndex) / 2
+          : i <= 5
+          ? fieldNumber + (i - startKeyIndex) / 2
+          : fieldNumber +
+            fieldDefinition[fieldOrder[i]] -
+            11 +
+            (i - startKeyIndex) / 2;
+
+      if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
+        possibleActions.push(`${fieldOrder[i]}${currentField}`);
+        break;
+      } else if (
+        hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)
+      ) {
+        break;
+      } else {
+        possibleActions.push(`${fieldOrder[i]}${currentField}`);
+      }
+    }
+  }
+
+  // upper left
+  let currentField = fieldNumber;
+  for (let i = startKeyIndex - 1; i >= 0; i--) {
+    currentField = i >= 5 ? currentField + 2 : currentField + 1;
+    if (fieldDefinition[fieldOrder[i]] >= currentField) {
+      if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
+        possibleActions.push(`${fieldOrder[i]}${currentField}`);
+        break;
+      } else if (
+        hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)
+      ) {
+        break;
+      } else {
+        possibleActions.push(`${fieldOrder[i]}${currentField}`);
+      }
+    }
+  }
+
+  // upper right
+  currentField = fieldNumber;
+  for (let i = startKeyIndex + 1; i < fieldOrder.length; i++) {
+    currentField = i <= 5 ? currentField + 2 : currentField + 1;
+    if (fieldDefinition[fieldOrder[i]] >= currentField) {
+      if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
+        possibleActions.push(`${fieldOrder[i]}${currentField}`);
+        break;
+      } else if (
+        hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)
+      ) {
+        break;
+      } else {
+        possibleActions.push(`${fieldOrder[i]}${currentField}`);
+      }
+    }
+  }
+
+  // lower left
+  currentField = fieldNumber;
+  for (let i = startKeyIndex - 1; i >= 0; i--) {
+    currentField = i < 5 ? currentField - 2 : currentField - 1;
+    if (currentField > 0) {
+      if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
+        possibleActions.push(`${fieldOrder[i]}${currentField}`);
+        break;
+      } else if (
+        hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)
+      ) {
+        break;
+      } else {
+        possibleActions.push(`${fieldOrder[i]}${currentField}`);
+      }
+    }
+  }
+
+  // lower right
+  currentField = fieldNumber;
+  for (let i = startKeyIndex + 1; i < fieldOrder.length; i++) {
+    currentField = i > 5 ? currentField - 2 : currentField - 1;
+    if (currentField > 0) {
+      if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
+        possibleActions.push(`${fieldOrder[i]}${currentField}`);
+        break;
+      } else if (
+        hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)
+      ) {
+        break;
+      } else {
+        possibleActions.push(`${fieldOrder[i]}${currentField}`);
+      }
+    }
+  }
+};
 
 // refactor maybe
 const getRookMoves = (
