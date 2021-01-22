@@ -19,21 +19,11 @@ const getPossibleMoves = (piece, clickedField) => {
   switch (piece) {
     case "pawn":
       if (currentPlayer === "white") {
-        getWhitePawnMoves(
-          fieldKey,
-          fieldNumber,
-          enemyPositions,
-          playerPositions
-        );
+        getWhitePawnMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
       }
       // if currentPlayer is black
       else {
-        getBlackPawnMoves(
-          fieldKey,
-          fieldNumber,
-          enemyPositions,
-          playerPositions
-        );
+        getBlackPawnMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
       }
       break;
     case "bishop":
@@ -43,7 +33,7 @@ const getPossibleMoves = (piece, clickedField) => {
       getRookMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
       break;
     case "knight":
-      // TODO
+      getKnightMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
       break;
     case "queen":
       getBishopMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
@@ -63,14 +53,10 @@ const handleMove = (clickedField, piece) => {
     drawGameState();
     possibleActions = [];
   } else {
-    const actionField = possibleActions.find(
-      (action) => action === clickedField
-    );
+    const actionField = possibleActions.find((action) => action === clickedField);
     if (actionField) {
       if (piece === "pawn" && defaultPawnPositions[currentPlayer].length) {
-        const playerPawnIndex = defaultPawnPositions[currentPlayer].indexOf(
-          selectedField
-        );
+        const playerPawnIndex = defaultPawnPositions[currentPlayer].indexOf(selectedField);
         if (playerPawnIndex !== -1) {
           defaultPawnPositions[currentPlayer].splice(playerPawnIndex, 1);
         }
@@ -79,10 +65,7 @@ const handleMove = (clickedField, piece) => {
       const oppositePlayer = currentPlayer === "white" ? "black" : "white";
       gameState[currentPlayer][piece][pieceIndex] = actionField;
 
-      if (
-        piece === "pawn" &&
-        promotionFields[currentPlayer].find((field) => field === actionField)
-      ) {
+      if (piece === "pawn" && promotionFields[currentPlayer].find((field) => field === actionField)) {
         appendPromotionWindow(currentPlayer, actionField);
       }
 
@@ -95,9 +78,7 @@ const handleMove = (clickedField, piece) => {
             gameState[oppositePlayer][key].splice(index, 1);
 
             if (key === "pawn") {
-              const pawnIndex = defaultPawnPositions[oppositePlayer].indexOf(
-                actionField
-              );
+              const pawnIndex = defaultPawnPositions[oppositePlayer].indexOf(actionField);
               if (index !== -1) {
                 defaultPawnPositions[oppositePlayer].splice(pawnIndex, 1);
               }
@@ -143,9 +124,7 @@ const appendPromotionWindow = (currentPlayer, actionField) => {
 
 const getEnemyPositions = () => {
   const enemyPositions = [];
-  for (let [key, value] of Object.entries(
-    gameState[currentPlayer === "white" ? "black" : "white"]
-  )) {
+  for (let [key, value] of Object.entries(gameState[currentPlayer === "white" ? "black" : "white"])) {
     value.forEach((piece) => {
       enemyPositions.push(piece);
     });
@@ -163,15 +142,8 @@ const getPlayerPositions = () => {
   return playerPositions;
 };
 
-const getWhitePawnMoves = (
-  fieldKey,
-  fieldNumber,
-  enemyPositions,
-  playerPositions
-) => {
-  const pawnInDefaultPosition = defaultPawnPositions[currentPlayer].indexOf(
-    `${fieldKey}${fieldNumber}`
-  );
+const getWhitePawnMoves = (fieldKey, fieldNumber, enemyPositions, playerPositions) => {
+  const pawnInDefaultPosition = defaultPawnPositions[currentPlayer].indexOf(`${fieldKey}${fieldNumber}`);
   // vertical movement
   for (let i = 0; i < (pawnInDefaultPosition > -1 ? 2 : 1); i++) {
     if (fieldNumber + i + 1 <= fieldDefinition[fieldKey]) {
@@ -189,33 +161,22 @@ const getWhitePawnMoves = (
   const fieldOrderIndex = fieldOrder.indexOf(fieldKey);
   // right side
   if (fieldOrderIndex + 1 < fieldOrder.length) {
-    const rightSideEnemyField = `${fieldOrder[fieldOrderIndex + 1]}${
-      fieldOrderIndex > 4 ? fieldNumber : fieldNumber + 1
-    }`;
+    const rightSideEnemyField = `${fieldOrder[fieldOrderIndex + 1]}${fieldOrderIndex > 4 ? fieldNumber : fieldNumber + 1}`;
     if (enemyPositions.find((field) => field === rightSideEnemyField)) {
       possibleActions.push(rightSideEnemyField);
     }
   }
   // left side
   if (fieldOrderIndex - 1 > 0) {
-    const leftSideEnemyField = `${fieldOrder[fieldOrderIndex - 1]}${
-      fieldOrderIndex > 5 ? fieldNumber + 1 : fieldNumber
-    }`;
+    const leftSideEnemyField = `${fieldOrder[fieldOrderIndex - 1]}${fieldOrderIndex > 5 ? fieldNumber + 1 : fieldNumber}`;
     if (enemyPositions.find((field) => field === leftSideEnemyField)) {
       possibleActions.push(leftSideEnemyField);
     }
   }
 };
 
-const getBlackPawnMoves = (
-  fieldKey,
-  fieldNumber,
-  enemyPositions,
-  playerPositions
-) => {
-  const pawnInDefaultPosition = defaultPawnPositions[currentPlayer].indexOf(
-    `${fieldKey}${fieldNumber}`
-  );
+const getBlackPawnMoves = (fieldKey, fieldNumber, enemyPositions, playerPositions) => {
+  const pawnInDefaultPosition = defaultPawnPositions[currentPlayer].indexOf(`${fieldKey}${fieldNumber}`);
   // vertical movement
   for (let i = 0; i < (pawnInDefaultPosition > -1 ? 2 : 1); i++) {
     if (fieldNumber - (i + 1) > 0) {
@@ -233,40 +194,25 @@ const getBlackPawnMoves = (
   const fieldOrderIndex = fieldOrder.indexOf(fieldKey);
   // right side
   if (fieldOrderIndex + 1 < fieldOrder.length) {
-    const rightSideEnemyField = `${fieldOrder[fieldOrderIndex + 1]}${
-      fieldOrderIndex > 4 ? fieldNumber - 1 : fieldNumber
-    }`;
+    const rightSideEnemyField = `${fieldOrder[fieldOrderIndex + 1]}${fieldOrderIndex > 4 ? fieldNumber - 1 : fieldNumber}`;
     if (enemyPositions.find((field) => field === rightSideEnemyField)) {
       possibleActions.push(rightSideEnemyField);
     }
   }
   // left side
   if (fieldOrderIndex - 1 > 0) {
-    const leftSideEnemyField = `${fieldOrder[fieldOrderIndex - 1]}${
-      fieldOrderIndex > 5 ? fieldNumber : fieldNumber - 1
-    }`;
+    const leftSideEnemyField = `${fieldOrder[fieldOrderIndex - 1]}${fieldOrderIndex > 5 ? fieldNumber : fieldNumber - 1}`;
     if (enemyPositions.find((field) => field === leftSideEnemyField)) {
       possibleActions.push(leftSideEnemyField);
     }
   }
 };
 
-const hasEnemyOrPlayerPiece = (
-  enemyOrPlayerPositions,
-  fieldKey,
-  fieldNumber
-) => {
-  return enemyOrPlayerPositions.find(
-    (field) => field === `${fieldKey}${fieldNumber}`
-  );
+const hasEnemyOrPlayerPiece = (enemyOrPlayerPositions, fieldKey, fieldNumber) => {
+  return enemyOrPlayerPositions.find((field) => field === `${fieldKey}${fieldNumber}`);
 };
 
-const getBishopMoves = (
-  fieldKey,
-  fieldNumber,
-  enemyPositions,
-  playerPositions
-) => {
+const getBishopMoves = (fieldKey, fieldNumber, enemyPositions, playerPositions) => {
   const startKeyIndex = fieldOrder.indexOf(fieldKey);
 
   // left
@@ -274,23 +220,15 @@ const getBishopMoves = (
     if ((startKeyIndex - i) % 2 === 0) {
       const currentField =
         startKeyIndex <= 5
-          ? fieldNumber +
-            fieldDefinition[fieldOrder[i]] -
-            fieldDefinition[fieldOrder[startKeyIndex]] +
-            (startKeyIndex - i) / 2
+          ? fieldNumber + fieldDefinition[fieldOrder[i]] - fieldDefinition[fieldOrder[startKeyIndex]] + (startKeyIndex - i) / 2
           : i <= 5
-          ? fieldNumber +
-            fieldDefinition[fieldOrder[i]] -
-            11 +
-            (startKeyIndex - i) / 2
+          ? fieldNumber + fieldDefinition[fieldOrder[i]] - 11 + (startKeyIndex - i) / 2
           : fieldNumber + (startKeyIndex - i) / 2;
 
       if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
         possibleActions.push(`${fieldOrder[i]}${currentField}`);
         break;
-      } else if (
-        hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)
-      ) {
+      } else if (hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)) {
         break;
       } else {
         possibleActions.push(`${fieldOrder[i]}${currentField}`);
@@ -303,23 +241,15 @@ const getBishopMoves = (
     if ((i - startKeyIndex) % 2 === 0) {
       const currentField =
         startKeyIndex > 5
-          ? fieldNumber +
-            fieldDefinition[fieldOrder[i]] -
-            fieldDefinition[fieldOrder[startKeyIndex]] +
-            (i - startKeyIndex) / 2
+          ? fieldNumber + fieldDefinition[fieldOrder[i]] - fieldDefinition[fieldOrder[startKeyIndex]] + (i - startKeyIndex) / 2
           : i <= 5
           ? fieldNumber + (i - startKeyIndex) / 2
-          : fieldNumber +
-            fieldDefinition[fieldOrder[i]] -
-            11 +
-            (i - startKeyIndex) / 2;
+          : fieldNumber + fieldDefinition[fieldOrder[i]] - 11 + (i - startKeyIndex) / 2;
 
       if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
         possibleActions.push(`${fieldOrder[i]}${currentField}`);
         break;
-      } else if (
-        hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)
-      ) {
+      } else if (hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)) {
         break;
       } else {
         possibleActions.push(`${fieldOrder[i]}${currentField}`);
@@ -335,9 +265,7 @@ const getBishopMoves = (
       if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
         possibleActions.push(`${fieldOrder[i]}${currentField}`);
         break;
-      } else if (
-        hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)
-      ) {
+      } else if (hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)) {
         break;
       } else {
         possibleActions.push(`${fieldOrder[i]}${currentField}`);
@@ -353,9 +281,7 @@ const getBishopMoves = (
       if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
         possibleActions.push(`${fieldOrder[i]}${currentField}`);
         break;
-      } else if (
-        hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)
-      ) {
+      } else if (hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)) {
         break;
       } else {
         possibleActions.push(`${fieldOrder[i]}${currentField}`);
@@ -371,9 +297,7 @@ const getBishopMoves = (
       if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
         possibleActions.push(`${fieldOrder[i]}${currentField}`);
         break;
-      } else if (
-        hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)
-      ) {
+      } else if (hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)) {
         break;
       } else {
         possibleActions.push(`${fieldOrder[i]}${currentField}`);
@@ -389,9 +313,7 @@ const getBishopMoves = (
       if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
         possibleActions.push(`${fieldOrder[i]}${currentField}`);
         break;
-      } else if (
-        hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)
-      ) {
+      } else if (hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)) {
         break;
       } else {
         possibleActions.push(`${fieldOrder[i]}${currentField}`);
@@ -401,12 +323,7 @@ const getBishopMoves = (
 };
 
 // refactor maybe
-const getRookMoves = (
-  fieldKey,
-  fieldNumber,
-  enemyPositions,
-  playerPositions
-) => {
+const getRookMoves = (fieldKey, fieldNumber, enemyPositions, playerPositions) => {
   // up
   for (let i = fieldNumber + 1; i <= fieldDefinition[fieldKey]; i++) {
     const currentField = `${fieldKey}${i}`;
@@ -439,26 +356,16 @@ const getRookMoves = (
   for (let i = fieldOrder.indexOf(fieldKey) - 1; i >= 0; i--) {
     const currentFieldNumber =
       i > 5
-        ? fieldNumber +
-          (fieldDefinition[fieldOrder[i]] -
-            fieldDefinition[fieldOrder[startKeyIndex]])
+        ? fieldNumber + (fieldDefinition[fieldOrder[i]] - fieldDefinition[fieldOrder[startKeyIndex]])
         : startKeyIndex > 5
         ? fieldNumber + (11 - fieldDefinition[fieldOrder[startKeyIndex]])
         : fieldNumber;
     const upperCurrentField = `${fieldOrder[i]}${currentFieldNumber}`;
     if (hexagons[upperCurrentField]) {
-      if (
-        hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentFieldNumber)
-      ) {
+      if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentFieldNumber)) {
         possibleActions.push(upperCurrentField);
         break;
-      } else if (
-        hasEnemyOrPlayerPiece(
-          playerPositions,
-          fieldOrder[i],
-          currentFieldNumber
-        )
-      ) {
+      } else if (hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentFieldNumber)) {
         break;
       } else {
         possibleActions.push(upperCurrentField);
@@ -476,18 +383,10 @@ const getRookMoves = (
         : fieldNumber - (11 - fieldDefinition[fieldOrder[i]]);
     const lowerCurrentField = `${fieldOrder[i]}${currentFieldNumber}`;
     if (hexagons[lowerCurrentField]) {
-      if (
-        hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentFieldNumber)
-      ) {
+      if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentFieldNumber)) {
         possibleActions.push(lowerCurrentField);
         break;
-      } else if (
-        hasEnemyOrPlayerPiece(
-          playerPositions,
-          fieldOrder[i],
-          currentFieldNumber
-        )
-      ) {
+      } else if (hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentFieldNumber)) {
         break;
       } else {
         possibleActions.push(lowerCurrentField);
@@ -505,18 +404,10 @@ const getRookMoves = (
         : fieldNumber + (11 - fieldDefinition[fieldOrder[startKeyIndex]]);
     const upperCurrentField = `${fieldOrder[i]}${currentFieldNumber}`;
     if (hexagons[upperCurrentField]) {
-      if (
-        hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentFieldNumber)
-      ) {
+      if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentFieldNumber)) {
         possibleActions.push(upperCurrentField);
         break;
-      } else if (
-        hasEnemyOrPlayerPiece(
-          playerPositions,
-          fieldOrder[i],
-          currentFieldNumber
-        )
-      ) {
+      } else if (hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentFieldNumber)) {
         break;
       } else {
         possibleActions.push(upperCurrentField);
@@ -534,22 +425,28 @@ const getRookMoves = (
         : fieldNumber - (11 - fieldDefinition[fieldOrder[i]]);
     const lowerCurrentField = `${fieldOrder[i]}${currentFieldNumber}`;
     if (hexagons[lowerCurrentField]) {
-      if (
-        hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentFieldNumber)
-      ) {
+      if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentFieldNumber)) {
         possibleActions.push(lowerCurrentField);
         break;
-      } else if (
-        hasEnemyOrPlayerPiece(
-          playerPositions,
-          fieldOrder[i],
-          currentFieldNumber
-        )
-      ) {
+      } else if (hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentFieldNumber)) {
         break;
       } else {
         possibleActions.push(lowerCurrentField);
       }
     }
+  }
+};
+
+const getKnightMoves = (fieldKey, fieldNumber, enemyPositions, playerPositions) => {
+  const startKeyIndex = fieldOrder.indexOf(fieldKey);
+
+  // left
+  for (let i = startKeyIndex - 1; i > 0 && startKeyIndex - i <= 3; i--) {
+    console.log(fieldOrder[i]);
+  }
+
+  // right
+  for (let i = startKeyIndex + 1; i < fieldOrder.length && i - startKeyIndex <= 3; i++) {
+    console.log(fieldOrder[i]);
   }
 };
