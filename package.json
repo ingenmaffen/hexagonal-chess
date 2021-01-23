@@ -1,0 +1,29 @@
+{
+  "name": "hexagonal-chess",
+  "version": "1.0.0",
+  "description": "Hexagonal chess on the web",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "watch": "nodemon index.js"
+  },
+  "keywords": [
+    "hexagonal",
+    "chess"
+  ],
+  "author": "Rabi Róbert <ingenmaffen@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ingenmaffen/hexagonal-chess/issues"
+  },
+  "homepage": "https://github.com/ingenmaffen/hexagonal-chess#readme",
+  "dependencies": {
+    "connect-timeout": "^1.9.0",
+    "express": "^4.17.1",
+    "socket.io": "^3.1.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}

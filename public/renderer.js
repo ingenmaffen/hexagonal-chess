@@ -39,7 +39,7 @@ const drawGameState = () => {
   for (const [key, value] of Object.entries(gameState.white)) {
     value.forEach((field) => {
       const img = new Image();
-      img.src = `./assets/${key}-white.svg`;
+      img.src = `./public/assets/${key}-white.svg`;
       img.onload = () => {
         ctx.drawImage(
           img,
@@ -55,7 +55,7 @@ const drawGameState = () => {
   for (const [key, value] of Object.entries(gameState.black)) {
     value.forEach((field) => {
       const img = new Image();
-      img.src = `./assets/${key}-black.svg`;
+      img.src = `./public/assets/${key}-black.svg`;
       img.onload = () => {
         ctx.drawImage(
           img,

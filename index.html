@@ -2,19 +2,25 @@
   <head>
     <meta charset="utf-8" />
     <title>Hexagonal Chess</title>
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <link rel="stylesheet" href="index.css" />
+    <link rel="icon" type="image/png" href="public/favicon.png" />
+    <link rel="stylesheet" href="public/index.css" />
   </head>
   <body>
     <div id="button-container"></div>
     <div id="promotion-window"></div>
     <canvas id="canvas" width="1080" height="1080"></canvas>
-    <script defer src="canvas.js"></script>
-    <script defer src="global-variables.js"></script>
-    <script defer src="renderer.js"></script>
-    <script defer src="movement.js"></script>
-    <script defer src="handle-click.js"></script>
-    <script defer src="dark-mode.js"></script>
-    <script defer src="game.js"></script>
+
+    <!-- websocket -->
+    <script defer src="/socket.io/socket.io.js"></script>
+
+    <!-- game code -->
+    <script defer src="public/canvas.js"></script>
+    <script defer src="public/global-variables.js"></script>
+    <script defer src="public/renderer.js"></script>
+    <script defer src="public/movement.js"></script>
+    <script defer src="public/handle-click.js"></script>
+    <script defer src="public/dark-mode.js"></script>
+    <script defer src="public/game.js"></script>
+    <script defer src="public/socket-handler.js"></script>
   </body>
 </html>

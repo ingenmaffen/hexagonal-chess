@@ -7,9 +7,7 @@ if (dark) {
 
 const appendDarkLightButton = () => {
   const button = document.createElement("BUTTON");
-  button.innerHTML = `<img width="32" height="32" src="assets/${
-    dark ? "sun" : "moon"
-  }.svg" />`;
+  button.innerHTML = `<img width="32" height="32" src="public/assets/${dark ? "sun" : "moon"}.svg" />`;
   button.style.marginRight = 10;
   button.style.marginTop = 10;
   button.style.backgroundColor = "transparent";
