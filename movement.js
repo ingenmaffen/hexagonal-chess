@@ -225,13 +225,15 @@ const getBishopMoves = (fieldKey, fieldNumber, enemyPositions, playerPositions) 
           ? fieldNumber + fieldDefinition[fieldOrder[i]] - 11 + (startKeyIndex - i) / 2
           : fieldNumber + (startKeyIndex - i) / 2;
 
-      if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
-        possibleActions.push(`${fieldOrder[i]}${currentField}`);
-        break;
-      } else if (hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)) {
-        break;
-      } else {
-        possibleActions.push(`${fieldOrder[i]}${currentField}`);
+      if (fieldDefinition[fieldOrder[i]] >= currentField && currentField > 0) {
+        if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
+          possibleActions.push(`${fieldOrder[i]}${currentField}`);
+          break;
+        } else if (hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)) {
+          break;
+        } else {
+          possibleActions.push(`${fieldOrder[i]}${currentField}`);
+        }
       }
     }
   }
@@ -245,14 +247,15 @@ const getBishopMoves = (fieldKey, fieldNumber, enemyPositions, playerPositions) 
           : i <= 5
           ? fieldNumber + (i - startKeyIndex) / 2
           : fieldNumber + fieldDefinition[fieldOrder[i]] - 11 + (i - startKeyIndex) / 2;
-
-      if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
-        possibleActions.push(`${fieldOrder[i]}${currentField}`);
-        break;
-      } else if (hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)) {
-        break;
-      } else {
-        possibleActions.push(`${fieldOrder[i]}${currentField}`);
+      if (fieldDefinition[fieldOrder[i]] >= currentField && currentField > 0) {
+        if (hasEnemyOrPlayerPiece(enemyPositions, fieldOrder[i], currentField)) {
+          possibleActions.push(`${fieldOrder[i]}${currentField}`);
+          break;
+        } else if (hasEnemyOrPlayerPiece(playerPositions, fieldOrder[i], currentField)) {
+          break;
+        } else {
+          possibleActions.push(`${fieldOrder[i]}${currentField}`);
+        }
       }
     }
   }
@@ -532,19 +535,37 @@ const getKingMoves = (fieldKey, fieldNumber, enemyPositions, playerPositions) =>
 
   // 1 distance moves
   const oneDistanceMoveFields = {
-    up: fieldDefinition[fieldKey] >= fieldNumber + 1 ? `${fieldKey}${fieldNumber + 1}` : null,
+    up:
+      fieldDefinition[fieldKey] >= fieldNumber + 1 &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex], fieldNumber + 1)
+        ? `${fieldKey}${fieldNumber + 1}`
+        : null,
     upLeft:
-      startKeyIndex - 1 >= 0 && fieldDefinition[fieldOrder[startKeyIndex - 1]] >= topLeftNumber
+      startKeyIndex - 1 >= 0 &&
+      fieldDefinition[fieldOrder[startKeyIndex - 1]] >= topLeftNumber &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex - 1], topLeftNumber)
         ? `${fieldOrder[startKeyIndex - 1]}${topLeftNumber}`
         : null,
-    downLeft: startKeyIndex - 1 >= 0 && topLeftNumber - 1 > 0 ? `${fieldOrder[startKeyIndex - 1]}${topLeftNumber - 1}` : null,
-    down: fieldNumber - 1 > 0 ? `${fieldKey}${fieldNumber - 1}` : null,
+    downLeft:
+      startKeyIndex - 1 >= 0 &&
+      topLeftNumber - 1 > 0 &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex - 1], topLeftNumber - 1)
+        ? `${fieldOrder[startKeyIndex - 1]}${topLeftNumber - 1}`
+        : null,
+    down:
+      fieldNumber - 1 > 0 && !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex], fieldNumber - 1)
+        ? `${fieldKey}${fieldNumber - 1}`
+        : null,
     downRight:
-      startKeyIndex + 1 < fieldOrder.length && topRightNumber - 1 > 0
+      startKeyIndex + 1 < fieldOrder.length &&
+      topRightNumber - 1 > 0 &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex + 1], topRightNumber - 1)
         ? `${fieldOrder[startKeyIndex + 1]}${topRightNumber - 1}`
         : null,
     upRight:
-      startKeyIndex + 1 < fieldOrder.length && fieldDefinition[fieldOrder[startKeyIndex + 1]] >= topRightNumber
+      startKeyIndex + 1 < fieldOrder.length &&
+      fieldDefinition[fieldOrder[startKeyIndex + 1]] >= topRightNumber &&
+      !hasEnemyOrPlayerPiece(playerPositions, fieldOrder[startKeyIndex + 1], topRightNumber)
         ? `${fieldOrder[startKeyIndex + 1]}${topRightNumber}`
         : null,
   };
