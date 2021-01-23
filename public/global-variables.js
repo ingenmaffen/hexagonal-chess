@@ -3,6 +3,7 @@ let localPlay = false;
 let possibleActions = [];
 let currentPlayer = "white";
 let playerColor;
+let check = false;
 const scale = 50;
 const hexagonHeight = scale * Math.cos(Math.PI / 6) * 2;
 const hexagonWidth = 1.5 * scale;

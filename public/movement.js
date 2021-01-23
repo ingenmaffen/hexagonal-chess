@@ -8,7 +8,7 @@ const promotionFields = {
   black: ["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1", "i1", "k1", "l1"],
 };
 
-const getPossibleMoves = (piece, clickedField) => {
+const getPossibleMoves = (piece, clickedField, shouldDrawField = true) => {
   selectedField = clickedField;
   const numberRegex = /\d+/g;
   let fieldNumber = clickedField.match(numberRegex)[0];
@@ -43,7 +43,9 @@ const getPossibleMoves = (piece, clickedField) => {
       getKingMoves(fieldKey, fieldNumber, enemyPositions, playerPositions);
       break;
   }
-  drawSelectedField();
+  if (shouldDrawField) {
+    drawSelectedField();
+  }
 };
 
 const handleMove = (clickedField, piece, sendToServer = false) => {
@@ -90,9 +92,26 @@ const handleMove = (clickedField, piece, sendToServer = false) => {
         }
       }
 
-      currentPlayer = oppositePlayer;
       possibleActions = [];
+      let possibleNextMoves = [];
+      for (let [piece, value] of Object.entries(gameState[currentPlayer])) {
+        value.forEach((field) => {
+          getPossibleMoves(piece, field, false);
+          possibleNextMoves = [...possibleNextMoves, ...possibleActions];
+        });
+      }
+      console.log(possibleNextMoves);
+      console.log(gameState[currentPlayer].king[0]);
+      currentPlayer = oppositePlayer;
+      const isKingPossibleMove = possibleNextMoves.find((field) => field === gameState[currentPlayer].king[0]);
+      if (isKingPossibleMove) {
+        check = true;
+      } else {
+        check = false;
+      }
+      console.log(check);
       selectedField = null;
+      possibleActions = [];
       drawBoard();
       drawGameState();
     }

@@ -43,6 +43,9 @@ const drawGameState = () => {
   if (localPlay) {
     $("#game-status-container").append(`<p>It's ${currentPlayer}'s turn</p>`);
   }
+  if (check) {
+    $("#game-status-container").append(`<p>Check!</p>`);
+  }
   for (const [key, value] of Object.entries(gameState.white)) {
     value.forEach((field) => {
       const img = new Image();

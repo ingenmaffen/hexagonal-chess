@@ -9,9 +9,9 @@ const socket = require("./socket");
 
 app.use(timeout("5s"));
 app.use("/public", (req, res) => {
-  //   res.setHeader("Cache-Control", `max-age=${60 * 60 * 24}`);
-  //   res.removeHeader("Pragma");
-  //   res.removeHeader("Expires");
+  res.setHeader("Cache-Control", `max-age=${60 * 60 * 24}`);
+  res.removeHeader("Pragma");
+  res.removeHeader("Expires");
   res.sendFile(path.join(__dirname, req.originalUrl));
 });
 app.use(haltOnTimedout);
