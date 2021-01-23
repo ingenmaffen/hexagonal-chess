@@ -14,7 +14,7 @@ module.exports = {
         io.to(roomId).emit("opponentLeft");
         if (roomId) {
           const otherPlayerId = getOtherPlayerId(rooms[roomId], socket.id);
-          const otherPlayerSocket = io.sockets.sockets[otherPlayerId];
+          const otherPlayerSocket = io.of("/").sockets.get(otherPlayerId);
           if (otherPlayerSocket) {
             otherPlayerSocket.leave(roomId);
           }
@@ -28,21 +28,21 @@ module.exports = {
       });
 
       // events to handle request for matching up players
-      socket.on("getPlayerList", () => {
+      socket.on("getPlayerList", async () => {
         const clients = [];
-        for (const [key, value] of Object.entries(io.sockets.sockets)) {
-          if (Object.keys(value.rooms).length < 2) {
-            clients.push({
-              playerId: key,
-              playerName: users[key],
-            });
-          }
+        const ids = await io.allSockets();
+        for (const key of Array.from(ids)) {
+          clients.push({
+            playerId: key,
+            playerName: users[key],
+          });
         }
+        // TODO: remove player from client list if they are in a room
         socket.emit("sendPlayerList", clients);
       });
 
       socket.on("sendRequestTo", (playerId) => {
-        const requestedSocket = io.sockets.sockets[playerId];
+        const requestedSocket = io.of("/").sockets.get(playerId);
         if (requestedSocket) {
           requestedSocket.emit("getRequestFrom", {
             playerId: socket.id,
@@ -52,17 +52,20 @@ module.exports = {
       });
 
       socket.on("acceptRequest", (playerId) => {
-        const requestedSocket = io.sockets.sockets[playerId];
+        const requestedSocket = io.of("/").sockets.get(playerId);
         if (requestedSocket) {
           const roomId = uuidv4();
           socket.join(roomId);
           requestedSocket.join(roomId);
-          io.to(roomId).emit("loadGame", roomId);
 
-          const room = require("./room").initRoom(roomId, requestedSocket.id, socket.id);
-          requestedSocket.emit("initialCards", room.player1.hand);
-          socket.emit("initialCards", room.player2.hand);
+          const room = {
+            roomId,
+            white: playerId,
+            black: socket.id,
+            gameState: initialGameState,
+          };
           rooms[roomId] = room;
+          io.to(roomId).emit("loadGame", room);
         }
       });
 
@@ -70,19 +73,21 @@ module.exports = {
         // TODO: send info to player about cancelation
       });
 
-      socket.on("loadGame", () => {
+      socket.on("requestGameData", () => {
         socket.emit("initialGameState", initialGameState);
       });
 
       socket.on("playerMove", (move) => {
-        console.log(move);
-        socket.emit("opponentMove", move);
+        const room = getRoomByPlayerId(socket.id, rooms);
+        const otherPlayerId = room.white === socket.id ? room.black : room.white;
+        const otherPlayerSocket = io.of("/").sockets.get(otherPlayerId);
+        otherPlayerSocket.emit("opponentMove", move);
       });
 
       socket.on("exitRoom", (roomId) => {
         const room = rooms[roomId];
         const otherPlayerId = getOtherPlayerId(room, socket.id);
-        const otherPlayerSocket = io.sockets.sockets[otherPlayerId];
+        const otherPlayerSocket = io.of("/").sockets.get(otherPlayerId);
         otherPlayerSocket.emit("opponentLeft");
         socket.leave(roomId);
         otherPlayerSocket.leave(roomId);
@@ -94,7 +99,7 @@ module.exports = {
         socket.emit("leaveRoom");
         if (room) {
           const otherPlayerId = getOtherPlayerId(room, socket.id);
-          const otherPlayerSocket = io.sockets.sockets[otherPlayerId];
+          const otherPlayerSocket = io.of("/").sockets.get(otherPlayerId);
           otherPlayerSocket.leave(roomId);
         }
       });
@@ -115,8 +120,8 @@ function getOtherPlayerId(room, playerId) {
 
 function getRoomByPlayerId(playerId, rooms) {
   for (let [key, value] of Object.entries(rooms)) {
-    if (value.player1.uuid === playerId || value.player2.uuid === playerId) {
-      return key;
+    if (value.white === playerId || value.black === playerId) {
+      return rooms[key];
     }
   }
 }

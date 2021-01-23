@@ -46,7 +46,7 @@ const getPossibleMoves = (piece, clickedField) => {
   drawSelectedField();
 };
 
-const handleMove = (clickedField, piece, fromServer = false) => {
+const handleMove = (clickedField, piece, sendToServer = false) => {
   if (selectedField === clickedField) {
     selectedField = null;
     drawBoard();
@@ -55,7 +55,7 @@ const handleMove = (clickedField, piece, fromServer = false) => {
   } else {
     const actionField = possibleActions.find((action) => action === clickedField);
     if (actionField) {
-      if (!fromServer) {
+      if (sendToServer) {
         sendMove(selectedField, actionField);
       }
       if (piece === "pawn" && defaultPawnPositions[currentPlayer].length) {

@@ -1,6 +1,8 @@
 let selectedField = null;
+let localPlay = true;
 let possibleActions = [];
 let currentPlayer = "white";
+let playerColor;
 const scale = 50;
 const hexagonHeight = scale * Math.cos(Math.PI / 6) * 2;
 const hexagonWidth = 1.5 * scale;
