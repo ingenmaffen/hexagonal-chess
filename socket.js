@@ -89,7 +89,9 @@ module.exports = {
         if (room) {
           const otherPlayerId = getOtherPlayerId(room, socket.id);
           const otherPlayerSocket = io.of("/").sockets.get(otherPlayerId);
-          otherPlayerSocket.emit("opponentLeft");
+          if (otherPlayerSocket) {
+            otherPlayerSocket.emit("opponentLeft");
+          }
           socket.leave(roomId);
           otherPlayerSocket.leave(roomId);
           rooms[roomId] = null;

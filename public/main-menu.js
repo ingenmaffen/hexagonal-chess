@@ -180,7 +180,9 @@ const appendExitSessionButton = () => {
 
 const exitFormGame = () => {
   $("#exit-button-container").empty();
-  socket.emit("exitRoom", roomId);
+  if (!localPlay) {
+    socket.emit("exitRoom", roomId);
+  }
   roomId = null;
   playerColor = null;
   localPlay = false;
