@@ -39,3 +39,18 @@ body {
   border: none;
   outline: none;
 }
+
+#main-menu {
+  position: absolute;
+  width: 100%;
+  top: 200px;
+  left: 0;
+  margin: 0 auto;
+  padding-top: 100px;
+}
+
+#main-menu input {
+  width: 200px;
+  margin: 0 auto;
+  margin-bottom: 10px;
+}

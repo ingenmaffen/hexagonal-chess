@@ -1,7 +1,7 @@
 // drawing methods
 const drawHexagon = (relativeX = 0, relativeY = 0, color = "#ff0000") => {
   ctx.fillStyle = color;
-  relativeX += hexagonWidth * 1.5;
+  relativeX += hexagonWidth * 1.85;
   relativeY += hexagonHeight / 2;
   ctx.beginPath();
   ctx.moveTo(relativeX + 0, relativeY + 0);
@@ -43,7 +43,7 @@ const drawGameState = () => {
       img.onload = () => {
         ctx.drawImage(
           img,
-          hexagons[field].x + hexagonWidth * 1.45,
+          hexagons[field].x + hexagonWidth * 1.8,
           hexagons[field].y + hexagonHeight * 0.65,
           hexagonWidth * 0.75,
           hexagonHeight * 0.75
@@ -59,7 +59,7 @@ const drawGameState = () => {
       img.onload = () => {
         ctx.drawImage(
           img,
-          hexagons[field].x + hexagonWidth * 1.45,
+          hexagons[field].x + hexagonWidth * 1.8,
           hexagons[field].y + hexagonHeight * 0.65,
           hexagonWidth * 0.75,
           hexagonHeight * 0.75

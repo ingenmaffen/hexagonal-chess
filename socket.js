@@ -1,5 +1,5 @@
 module.exports = {
-  start: (http) => {
+  start: (http, initialGameState) => {
     const { v4: uuidv4 } = require("uuid");
     const io = require("socket.io")(http, { cookie: false });
     const rooms = {};
@@ -68,6 +68,15 @@ module.exports = {
 
       socket.on("cancelRequest", (playerId) => {
         // TODO: send info to player about cancelation
+      });
+
+      socket.on("loadGame", () => {
+        socket.emit("initialGameState", initialGameState);
+      });
+
+      socket.on("playerMove", (move) => {
+        console.log(move);
+        socket.emit("opponentMove", move);
       });
 
       socket.on("exitRoom", (roomId) => {

@@ -21,7 +21,7 @@ const findClickedPiece = (player, clickedField) => {
 canvas.addEventListener("click", (event) => {
   const x = event.layerX / gameScale;
   const y = event.layerY / gameScale;
-  const offsetX = hexagonWidth * 1.5;
+  const offsetX = hexagonWidth * 1.8;
   const offsetY = hexagonHeight / 2;
   const clickedField = [];
   for (const [key, value] of Object.entries(hexagons)) {
