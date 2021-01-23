@@ -43,8 +43,7 @@ body {
 #title {
   position: absolute;
   width: 100%;
-  height: 100%;
-  top: 200px;
+  top: 78px;
   left: 0;
 }
 
@@ -60,7 +59,56 @@ body {
   margin-bottom: 10px;
 }
 
+#main-menu .menu-button-full {
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 16px;
+  width: 200px;
+}
+
+.menu-button-half {
+  margin-right: 10px;
+}
+
 .table-container {
   max-height: 80%;
   overflow: auto;
+}
+
+.player-list-name {
+  vertical-align: middle;
+}
+
+.request-modal {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  border: 1px solid #3f3f3f;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: white;
+  color: black;
+}
+
+.request-body .text {
+  margin-bottom: 10px;
+}
+
+.end-game-box {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding-top: 15%;
+  z-index: 10;
+  color: black;
+  font-family: monospace;
+  font-size: 60px;
+}
+
+.title {
+  font-family: monospace;
+  font-size: 64px;
 }

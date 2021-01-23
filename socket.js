@@ -10,13 +10,13 @@ module.exports = {
       socket.on("disconnect", () => {
         console.log(`${socket.id} disconnected`);
         // TODO: a better option would be to reconnect the player
-        const roomId = getRoomByPlayerId(socket.id, rooms);
-        io.to(roomId).emit("opponentLeft");
-        if (roomId) {
-          const otherPlayerId = getOtherPlayerId(rooms[roomId], socket.id);
+        const room = getRoomByPlayerId(socket.id, rooms);
+        if (room) {
+          io.to(room.roomId).emit("opponentLeft");
+          const otherPlayerId = getOtherPlayerId(rooms[room.roomId], socket.id);
           const otherPlayerSocket = io.of("/").sockets.get(otherPlayerId);
           if (otherPlayerSocket) {
-            otherPlayerSocket.leave(roomId);
+            otherPlayerSocket.leave(room.roomId);
           }
         }
         delete users[socket.id];
@@ -109,10 +109,10 @@ module.exports = {
 
 function getOtherPlayerId(room, playerId) {
   let otherPlayerId = "";
-  if (room.player1.uuid === playerId) {
-    otherPlayerId = room.player2.uuid;
+  if (room.white === playerId) {
+    otherPlayerId = room.black;
   } else {
-    otherPlayerId = room.player1.uuid;
+    otherPlayerId = room.white;
   }
 
   return otherPlayerId;

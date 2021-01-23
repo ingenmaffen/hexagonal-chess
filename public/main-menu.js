@@ -37,6 +37,13 @@ const showMenu = () => {
   $("#title").show();
 };
 
+const emptyGameState = () => {
+  gameState = {
+    white: {},
+    black: {},
+  };
+};
+
 const appendMainMenu = () => {
   const mainMenuButtons = [
     {
@@ -139,6 +146,23 @@ const appendGameRequest = (playerId, playerName) => {
     event.stopImmediatePropagation();
     modal.remove();
   });
+};
+
+const appendLeaveRoomButton = () => {
+  const button = $(`<button type="button" class="btn btn-success">${"Return to lobby"}</button>`);
+  button.on("click", (event) => {
+    emptyGameState();
+    drawBoard();
+    drawGameState();
+    emptyMenu();
+    showMenu();
+    appendMainMenu();
+
+    $("#end-game-box").css("display", "none");
+    $("#end-game-box").empty();
+    event.stopImmediatePropagation();
+  });
+  button.appendTo("#end-game-box");
 };
 
 appendUsernameInput();

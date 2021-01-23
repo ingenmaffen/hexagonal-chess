@@ -49,6 +49,12 @@ socket.on("getRequestFrom", ({ playerId, playerName }) => {
   appendGameRequest(playerId, playerName);
 });
 
+socket.on("opponentLeft", () => {
+  $("#end-game-box").css("display", "block");
+  $("#end-game-box").append("<p>Your opponent left!</p>");
+  appendLeaveRoomButton();
+});
+
 const sendMove = (from, to) => {
   socket.emit("playerMove", { from, to });
 };

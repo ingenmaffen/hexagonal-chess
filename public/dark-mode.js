@@ -3,6 +3,7 @@ let dark = localStorage.getItem("darkMode");
 dark = dark && dark === "true";
 if (dark) {
   document.body.style.backgroundColor = "black";
+  $("#title").css("color", "white");
 }
 
 const appendDarkLightButton = () => {
@@ -24,8 +25,10 @@ const switchDarkLightMode = () => {
   dark = !dark;
   if (dark) {
     document.body.style.backgroundColor = "black";
+    $("#title").css("color", "white");
   } else {
     document.body.style.backgroundColor = "white";
+    $("#title").css("color", "black");
   }
   localStorage.setItem("darkMode", dark);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
