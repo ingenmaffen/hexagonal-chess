@@ -86,21 +86,14 @@ module.exports = {
 
       socket.on("exitRoom", (roomId) => {
         const room = rooms[roomId];
-        const otherPlayerId = getOtherPlayerId(room, socket.id);
-        const otherPlayerSocket = io.of("/").sockets.get(otherPlayerId);
-        otherPlayerSocket.emit("opponentLeft");
-        socket.leave(roomId);
-        otherPlayerSocket.leave(roomId);
-      });
-
-      socket.on("returnToLobby", (roomId) => {
-        const room = rooms[roomId];
-        socket.leave(roomId, () => {});
-        socket.emit("leaveRoom");
         if (room) {
           const otherPlayerId = getOtherPlayerId(room, socket.id);
           const otherPlayerSocket = io.of("/").sockets.get(otherPlayerId);
+          otherPlayerSocket.emit("opponentLeft");
+          socket.leave(roomId);
           otherPlayerSocket.leave(roomId);
+          rooms[roomId] = null;
+          delete room[roomId];
         }
       });
     });
@@ -120,7 +113,7 @@ function getOtherPlayerId(room, playerId) {
 
 function getRoomByPlayerId(playerId, rooms) {
   for (let [key, value] of Object.entries(rooms)) {
-    if (value.white === playerId || value.black === playerId) {
+    if (value && (value.white === playerId || value.black === playerId)) {
       return rooms[key];
     }
   }

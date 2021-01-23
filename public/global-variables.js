@@ -1,5 +1,5 @@
 let selectedField = null;
-let localPlay = true;
+let localPlay = false;
 let possibleActions = [];
 let currentPlayer = "white";
 let playerColor;

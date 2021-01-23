@@ -31,6 +31,7 @@ const emptyMenu = () => {
 
 const hideMenu = () => {
   $("#title").hide();
+  appendExitSessionButton();
 };
 
 const showMenu = () => {
@@ -38,6 +39,7 @@ const showMenu = () => {
 };
 
 const emptyGameState = () => {
+  currentPlayer = "white";
   gameState = {
     white: {},
     black: {},
@@ -51,7 +53,7 @@ const appendMainMenu = () => {
       callback: () => {
         hideMenu();
         localPlay = true;
-        // TODO: append exit button
+        socket.emit("requestGameData");
       },
     },
     {
@@ -151,18 +153,43 @@ const appendGameRequest = (playerId, playerName) => {
 const appendLeaveRoomButton = () => {
   const button = $(`<button type="button" class="btn btn-success">${"Return to lobby"}</button>`);
   button.on("click", (event) => {
-    emptyGameState();
-    drawBoard();
-    drawGameState();
-    emptyMenu();
-    showMenu();
-    appendMainMenu();
+    exitFormGame();
 
     $("#end-game-box").css("display", "none");
     $("#end-game-box").empty();
     event.stopImmediatePropagation();
   });
   button.appendTo("#end-game-box");
+};
+
+const appendExitSessionButton = () => {
+  $("#exit-button-container").empty();
+  const button = $(
+    `
+    <button type="button" class="btn btn-success">
+      <img src="/public/assets/exit-session.svg" />
+    </button>`
+  );
+  button.on("click", (event) => {
+    exitFormGame();
+    $("#exit-button-container").empty();
+    event.stopImmediatePropagation();
+  });
+  button.appendTo("#exit-button-container");
+};
+
+const exitFormGame = () => {
+  $("#exit-button-container").empty();
+  socket.emit("exitRoom", roomId);
+  roomId = null;
+  playerColor = null;
+  localPlay = false;
+  emptyGameState();
+  drawBoard();
+  drawGameState();
+  emptyMenu();
+  showMenu();
+  appendMainMenu();
 };
 
 appendUsernameInput();

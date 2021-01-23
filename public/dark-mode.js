@@ -3,6 +3,7 @@ let dark = localStorage.getItem("darkMode");
 dark = dark && dark === "true";
 if (dark) {
   document.body.style.backgroundColor = "black";
+  document.body.style.color = "white";
   $("#title").css("color", "white");
 }
 
@@ -25,9 +26,11 @@ const switchDarkLightMode = () => {
   dark = !dark;
   if (dark) {
     document.body.style.backgroundColor = "black";
+    document.body.style.color = "white";
     $("#title").css("color", "white");
   } else {
     document.body.style.backgroundColor = "white";
+    document.body.style.color = "black";
     $("#title").css("color", "black");
   }
   localStorage.setItem("darkMode", dark);
