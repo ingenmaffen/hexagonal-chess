@@ -100,8 +100,6 @@ const handleMove = (clickedField, piece, sendToServer = false) => {
           possibleNextMoves = [...possibleNextMoves, ...possibleActions];
         });
       }
-      console.log(possibleNextMoves);
-      console.log(gameState[currentPlayer].king[0]);
       currentPlayer = oppositePlayer;
       const isKingPossibleMove = possibleNextMoves.find((field) => field === gameState[currentPlayer].king[0]);
       if (isKingPossibleMove) {
@@ -109,7 +107,6 @@ const handleMove = (clickedField, piece, sendToServer = false) => {
       } else {
         check = false;
       }
-      console.log(check);
       selectedField = null;
       possibleActions = [];
       drawBoard();
