@@ -25,6 +25,8 @@ socket.on("loadGame", (room) => {
   localPlay = false;
   hideMenu();
   gameState = room.gameState;
+  defaultPawnPositions.white = [...defaultPawnPositionsAtGameInit.white];
+  defaultPawnPositions.black = [...defaultPawnPositionsAtGameInit.black];
   drawBoard();
   drawGameState();
 });
@@ -61,6 +63,8 @@ const sendMove = (from, to) => {
 
 const loadGame = (loadedGameState) => {
   gameState = loadedGameState;
+  defaultPawnPositions.white = [...defaultPawnPositionsAtGameInit.white];
+  defaultPawnPositions.black = [...defaultPawnPositionsAtGameInit.black];
   drawBoard();
   drawGameState();
 };

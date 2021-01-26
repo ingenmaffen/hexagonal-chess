@@ -21,6 +21,10 @@ const fieldDefinition = {
   k: 7,
   l: 6,
 };
+const defaultPawnPositionsAtGameInit = {
+  white: ["b1", "c2", "d3", "e4", "f5", "g4", "h3", "i2", "k1"],
+  black: ["b7", "c7", "d7", "e7", "f7", "g7", "h7", "i7", "k7"],
+};
 let gameState = {
   white: {},
   black: {},

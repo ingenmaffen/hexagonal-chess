@@ -1,6 +1,6 @@
 {
   "name": "hexagonal-chess",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Hexagonal chess on the web",
   "main": "index.js",
   "scripts": {

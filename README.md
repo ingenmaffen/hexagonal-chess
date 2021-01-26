@@ -12,12 +12,16 @@ First of all, I have to say that I am not happy with this code base. I am okay w
 
 If you plan on looking into the code or contribute to it, the only thing I can say is that I am terribly sorry for what you're about to see. It's the definition of "good enough", 'cause it works (most of the time) and I just want to move on to other projects for the time being.
 
+I also shamelessly copied all of the "web app" stuff from another project of mine (menu, backend, websocket, etc.) which I would love to redo from the ground up. I started this project as a "local only" game so all of these features came as an afterthought.
+
 Other than this, I used the aforementioned Wikipedia page to create the rules for the game but I am not really familiar with the game so in case I made any mistakes on how the pieces move or anything, feel free to create an issue and let me know.
 
 ## Roadmap
 
 Currently I am not planning on continuing to work on this project, but I have some ideas that are left to do, namely:
 
+- Validate move on backend
+- Fix promotion in online play
 - Refactor code
 - Rematch option
 - Send request to players who are not playing currently

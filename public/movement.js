@@ -71,7 +71,9 @@ const handleMove = (clickedField, piece, sendToServer = false) => {
       gameState[currentPlayer][piece][pieceIndex] = actionField;
 
       if (piece === "pawn" && promotionFields[currentPlayer].find((field) => field === actionField)) {
-        appendPromotionWindow(currentPlayer, actionField);
+        if (localPlay || (!localPlay && playerColor === currentPlayer)) {
+          appendPromotionWindow(currentPlayer, actionField);
+        }
       }
 
       // remove enemy piece
@@ -125,7 +127,7 @@ const appendPromotionWindow = (currentPlayer, actionField) => {
     button.classList = ["promotion-button"];
     button.style.backgroundColor = dark ? "black" : "white";
     buttonContainer.appendChild(button);
-    button.innerHTML = `<img width="32" height="32" src="assets/${piece}-${currentPlayer}.svg" />`;
+    button.innerHTML = `<img width="32" height="32" src="public/assets/${piece}-${currentPlayer}.svg" />`;
     button.onclick = () => {
       promoWindow.removeChild(buttonContainer);
       const index = gameState[currentPlayer].pawn.indexOf(actionField);
