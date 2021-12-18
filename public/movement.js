@@ -48,7 +48,7 @@ const getPossibleMoves = (piece, clickedField, shouldDrawField = true) => {
   }
 };
 
-const handleMove = (clickedField, piece, sendToServer = false) => {
+const handleMove = (clickedField, piece) => {
   if (selectedField === clickedField) {
     selectedField = null;
     drawBoard();
@@ -57,9 +57,6 @@ const handleMove = (clickedField, piece, sendToServer = false) => {
   } else {
     const actionField = possibleActions.find((action) => action === clickedField);
     if (actionField) {
-      if (sendToServer) {
-        sendMove(selectedField, actionField);
-      }
       if (piece === "pawn" && defaultPawnPositions[currentPlayer].length) {
         const playerPawnIndex = defaultPawnPositions[currentPlayer].indexOf(selectedField);
         if (playerPawnIndex !== -1) {
@@ -71,9 +68,7 @@ const handleMove = (clickedField, piece, sendToServer = false) => {
       gameState[currentPlayer][piece][pieceIndex] = actionField;
 
       if (piece === "pawn" && promotionFields[currentPlayer].find((field) => field === actionField)) {
-        if (localPlay || (!localPlay && playerColor === currentPlayer)) {
-          appendPromotionWindow(currentPlayer, actionField);
-        }
+        appendPromotionWindow(currentPlayer, actionField);
       }
 
       // remove enemy piece

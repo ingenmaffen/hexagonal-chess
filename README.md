@@ -2,6 +2,10 @@
 
 A basic implementation of [Gliński's hexagonal chess](https://en.wikipedia.org/wiki/Hexagonal_chess#Gli%C5%84ski's_hexagonal_chess)
 
+## Offile mode branch
+
+This branch is created to have the most up-to-date version of the game without the online functionality. I plan to use it in and upcoming game as a minigame.
+
 ## Acknowledgement
 
 I "borrowed" some assets from [Flaticon](https://www.flaticon.com): the pieces are from [prettycons](https://www.flaticon.com/authors/prettycons) and the sun, moon and the favicon is from [Freepik](http://www.freepik.com/).

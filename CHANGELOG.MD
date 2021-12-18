@@ -1,5 +1,8 @@
 # Changelog
 
+## Offline mode
+
+- Remove online functionality
 ## 1.0.1
 
 - Fix promotion image path

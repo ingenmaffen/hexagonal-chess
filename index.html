@@ -7,38 +7,22 @@
     <link rel="stylesheet" href="public/bootstrap.min.css" />
   </head>
   <body>
-    <div id="exit-button-container"></div>
     <div id="game-status-container"></div>
     <div id="button-container"></div>
-    <div id="title">
-      <div class="title">Hexagonal chess</div>
-      <div id="main-menu"></div>
-    </div>
-    <div class="more-info">
-      More info @
-      <a href="https://github.com/ingenmaffen/hexagonal-chess" target="_blank"
-        >https://github.com/ingenmaffen/hexagonal-chess</a
-      >
-    </div>
-    <div id="end-game-box" class="end-game-box"></div>
     <div id="promotion-window"></div>
     <canvas id="canvas" width="1080" height="1080"></canvas>
-
-    <!-- websocket -->
-    <script defer src="/socket.io/socket.io.js"></script>
 
     <!-- jQuery -->
     <script defer src="public/assets/jquery-3.5.1.min.js"></script>
 
     <!-- game code -->
-    <script defer src="public/socket-handler.js"></script>
     <script defer src="public/canvas.js"></script>
     <script defer src="public/global-variables.js"></script>
     <script defer src="public/renderer.js"></script>
     <script defer src="public/movement.js"></script>
     <script defer src="public/handle-click.js"></script>
     <script defer src="public/dark-mode.js"></script>
+    <script defer src="public/initiate-game.js"></script>
     <script defer src="public/game.js"></script>
-    <script defer src="public/main-menu.js"></script>
   </body>
 </html>

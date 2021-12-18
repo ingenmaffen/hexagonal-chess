@@ -11,7 +11,7 @@ const findClickedPiece = (player, clickedField) => {
     for (const [key, value] of Object.entries(gameState[player])) {
       value.forEach((field) => {
         if (field === selectedField) {
-          handleMove(clickedField, key, !localPlay);
+          handleMove(clickedField, key);
         }
       });
     }
@@ -19,7 +19,6 @@ const findClickedPiece = (player, clickedField) => {
 };
 
 canvas.addEventListener("click", (event) => {
-  if (localPlay || (playerColor && playerColor === currentPlayer)) {
     const x = event.layerX / gameScale;
     const y = event.layerY / gameScale;
     const offsetX = hexagonWidth * 1.8;
@@ -38,5 +37,4 @@ canvas.addEventListener("click", (event) => {
     if (clickedField.length === 1) {
       findClickedPiece(currentPlayer, clickedField[0]);
     }
-  }
 });

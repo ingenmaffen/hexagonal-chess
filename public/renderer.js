@@ -37,12 +37,7 @@ const drawBoard = () => {
 
 const drawGameState = () => {
   $("#game-status-container").empty();
-  if (playerColor) {
-    $("#game-status-container").append(`<p>You play as ${playerColor}</p><p>It's ${currentPlayer}'s turn</p>`);
-  }
-  if (localPlay) {
-    $("#game-status-container").append(`<p>It's ${currentPlayer}'s turn</p>`);
-  }
+  $("#game-status-container").append(`<p>It's ${currentPlayer}'s turn</p>`);
   if (check) {
     $("#game-status-container").append(`<p>Check!</p>`);
   }
