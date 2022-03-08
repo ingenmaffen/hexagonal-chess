@@ -20,7 +20,8 @@ const findClickedPiece = (player, clickedField) => {
 
 canvas.addEventListener("click", (event) => {
   if (localPlay || (playerColor && playerColor === currentPlayer)) {
-    const x = event.layerX / gameScale;
+    const canvasOffset = (window.innerWidth - (1080 * gameScale)) / 2; 
+    const x = (event.layerX - canvasOffset) / gameScale;
     const y = event.layerY / gameScale;
     const offsetX = hexagonWidth * 1.8;
     const offsetY = hexagonHeight / 2;

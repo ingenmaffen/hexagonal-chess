@@ -16,7 +16,7 @@ module.exports = {
           const otherPlayerId = getOtherPlayerId(rooms[room.roomId], socket.id);
           const otherPlayerSocket = io.of("/").sockets.get(otherPlayerId);
           if (otherPlayerSocket) {
-            otherPlayerSocket.leave(room.roomId);
+            otherPlayerSocket?.leave(room.roomId);
           }
         }
         delete users[socket.id];
@@ -92,8 +92,8 @@ module.exports = {
           if (otherPlayerSocket) {
             otherPlayerSocket.emit("opponentLeft");
           }
-          socket.leave(roomId);
-          otherPlayerSocket.leave(roomId);
+          socket?.leave(roomId);
+          otherPlayerSocket?.leave(roomId);
           rooms[roomId] = null;
           delete room[roomId];
         }
